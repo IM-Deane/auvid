@@ -29,7 +29,6 @@ function FileUploader({ handleResult }) {
 			);
 			if (!response.data) throw new Error("Error uploading file");
 
-			console.log(response.data);
 			handleResult(response.data);
 		} catch (error) {
 			if (error.response) {

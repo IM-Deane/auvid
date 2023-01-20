@@ -32,14 +32,17 @@ handler.post(async (req, res) => {
 			return;
 		}
 
+		const timestamp = new Date().toISOString();
+		const filename = `${timestamp}-${files.file.originalFilename}`;
+
 		// add file to public/uploads
 		const oldPath = files.file.filepath;
-		const newPath = `./public/uploads/${files.file.originalFilename}`;
-		mv(oldPath, newPath, (err: any) => {
-			throw new Error(err); // something went wrong during upload
-		});
+		const newPath = `./public/uploads/${filename}`;
+		mv(oldPath, newPath, (err: any) => err && console.log(err));
 
-		res.status(200).json({ result: "File uploaded successfully", files });
+		res
+			.status(200)
+			.json({ result: "File uploaded successfully", files, filename });
 	} catch (error: any) {
 		res.status(500).json({ message: error.message });
 	}
