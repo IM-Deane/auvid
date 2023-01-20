@@ -15,7 +15,7 @@ function AudioRecorder() {
 		const formData = new FormData();
 		formData.append("key", blob);
 
-		// send to server
+		// TODO: send to server
 
 		// xhr.send(formData);
 
