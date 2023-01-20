@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+
 import Layout from "../components/Layout";
 
 import FileUploader from "../components/FileUploader";
@@ -11,6 +14,9 @@ const IndexPage = () => {
 		status: false,
 		message: "",
 	});
+
+	const session = useSession();
+	const supabase = useSupabaseClient();
 
 	const handleUploadResult = (data) => {
 		if (!data) {
@@ -24,7 +30,13 @@ const IndexPage = () => {
 
 	const handleAlertDismiss = () => setShowAlert(false);
 
-	return (
+	return !session ? (
+		<Auth
+			supabaseClient={supabase}
+			appearance={{ theme: ThemeSupa }}
+			theme="dark"
+		/>
+	) : (
 		<Layout title="Home | RustleAI">
 			<h1>Hello RustleAI 👋</h1>
 			<FileUploader handleResult={handleUploadResult} />
