@@ -210,11 +210,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
 				</div>
 			</header>
 			<main>
-				<div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-					{/* Replace with your content */}
-					{children}
-					{/* /End replace */}
-				</div>
+				<div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">{children}</div>
 			</main>
 		</div>
 	</div>
