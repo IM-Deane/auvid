@@ -57,7 +57,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
 									<div className="hidden md:block">
 										<div className="ml-10 flex items-baseline space-x-4">
 											{navigation.map((item) => (
-												<a
+												<Link
 													key={item.name}
 													href={item.href}
 													className={classNames(
@@ -69,7 +69,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
 													aria-current={item.current ? "page" : undefined}
 												>
 													{item.name}
-												</a>
+												</Link>
 											))}
 										</div>
 									</div>
