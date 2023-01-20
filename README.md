@@ -14,7 +14,7 @@ Davinci.
 
 ### Stack:
 
-- [NextJS]
+- [NextJS](https://nextjs.org/)
 - [RecordRTC for Audio](https://recordrtc.org/)
 - [OpenAI Whisper](https://github.com/openai/whisper)
 - [OpenAI Davinci](https://beta.openai.com/docs/introduction)
