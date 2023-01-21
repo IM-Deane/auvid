@@ -1,9 +1,12 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+
+import { signOut } from "../api";
 
 const user = {
 	name: "Tom Cook",
@@ -13,14 +16,11 @@ const user = {
 };
 const navigation = [
 	{ name: "Dashboard", href: "/", current: true },
-	{ name: "Team", href: "#", current: false },
-	{ name: "Projects", href: "#", current: false },
-	{ name: "Calendar", href: "#", current: false },
+	{ name: "Notes", href: "/notes", current: false },
 	{ name: "Reports", href: "#", current: false },
 ];
 const userNavigation = [
 	{ name: "Your Profile", href: "/account" },
-	{ name: "Settings", href: "#" },
 	{ name: "Sign out", href: "#" },
 ];
 
@@ -106,21 +106,34 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
 												leaveTo="transform opacity-0 scale-95"
 											>
 												<Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-													{userNavigation.map((item) => (
-														<Menu.Item key={item.name}>
-															{({ active }) => (
-																<a
-																	href={item.href}
-																	className={classNames(
-																		active ? "bg-gray-100" : "",
-																		"block px-4 py-2 text-sm text-gray-700"
-																	)}
-																>
-																	{item.name}
-																</a>
-															)}
-														</Menu.Item>
-													))}
+													<Menu.Item>
+														{({ active }) => (
+															<a
+																href="/account"
+																className={classNames(
+																	active ? "bg-gray-100" : "",
+																	"block px-4 py-2 text-sm text-gray-700"
+																)}
+															>
+																Your Profile
+															</a>
+														)}
+													</Menu.Item>
+													<Menu.Item>
+														{({ active }) => (
+															<p
+																onClick={() => {
+																	signOut();
+																}}
+																className={classNames(
+																	active ? "bg-gray-100 cursor-pointer" : "",
+																	"block px-4 py-2 text-sm text-gray-700"
+																)}
+															>
+																Signout
+															</p>
+														)}
+													</Menu.Item>
 												</Menu.Items>
 											</Transition>
 										</Menu>
