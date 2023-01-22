@@ -1,11 +1,9 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, Fragment } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 
-import { signOut } from "../api";
+import { Dialog, Transition } from "@headlessui/react";
 
 import {
 	ArrowUpOnSquareIcon,
@@ -44,11 +42,8 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 
 	const router = useRouter();
 
-	const currentPage = router.pathname;
-	console.log(currentPage);
-
 	navigation.forEach((item) => {
-		if (item.href === currentPage) {
+		if (item.href === router.pathname) {
 			item.current = true;
 		} else {
 			item.current = false;
@@ -161,7 +156,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 												</div>
 												<div className="ml-3">
 													<p className="text-base font-medium text-white">
-														Tom Cook
+														Test User
 													</p>
 													<p className="text-sm font-medium text-gray-400 group-hover:text-gray-300">
 														View profile
@@ -231,7 +226,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 										/>
 									</div>
 									<div className="ml-3">
-										<p className="text-sm font-medium text-white">Tom Cook</p>
+										<p className="text-sm font-medium text-white">Test User</p>
 										<p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
 											View profile
 										</p>
