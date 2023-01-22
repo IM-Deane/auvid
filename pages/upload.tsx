@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import axios from "axios";
 
@@ -61,6 +61,11 @@ const AudioUpload = () => {
 			setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		// hide alert after 5 seconds
+		if (showAlert) setTimeout(() => setShowAlert(false), 5000);
+	}, [showAlert]);
 
 	return (
 		<Layout title="Upload Audio | RustleAI">
