@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 
 const AboutPage = () => (
 	<Layout title="About | RustleAI">
-		<h1>About</h1>
+		<h1 className="text-2xl font-semibold text-gray-900">About</h1>
 		<p>This is the about page</p>
 		<p>
 			<Link href="/">Go home</Link>

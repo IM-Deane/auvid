@@ -38,7 +38,9 @@ const IndexPage = () => {
 		/>
 	) : (
 		<Layout title="Home | RustleAI">
-			<h1>Hello RustleAI 👋</h1>
+			<h1 className="text-2xl font-semibold text-gray-900">
+				Hello RustleAI 👋
+			</h1>
 			<FileUploader handleResult={handleUploadResult} />
 			{showAlert && (
 				<Alert
