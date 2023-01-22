@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import middleware from "../../middleware/middleware";
 import nc from "next-connect";
+import { spawn } from "child_process";
 
 const mv = require("mv");
 
@@ -40,9 +41,31 @@ handler.post(async (req, res) => {
 		const newPath = `./public/uploads/${filename}`;
 		mv(oldPath, newPath, (err: any) => err && console.log(err));
 
-		res
-			.status(200)
-			.json({ result: "File uploaded successfully", files, filename });
+		// use python to transcribe file's audio to text
+		const python = spawn("python", ["main.py", newPath]);
+
+		let transcribedText;
+		python.stdout.on("data", (data) => {
+			console.log("Pipe data from python script...");
+			transcribedText = data.toString();
+		});
+
+		// handle errors
+		python.stderr.on("data", (data) => {
+			console.log(`stderr: ${data}`);
+		});
+
+		// in closing event we are sure that stream from child process is closed
+		python.on("close", (code) => {
+			console.log(`child process close all stdio with code ${code}`);
+			// send data to browser
+			res.status(200).json({
+				result: "File uploaded and transcribed successfully",
+				files,
+				filename,
+				transcribedText,
+			});
+		});
 	} catch (error: any) {
 		res.status(500).json({ message: error.message });
 	}
