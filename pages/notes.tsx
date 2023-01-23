@@ -102,12 +102,14 @@ const NotesList = ({ fileList, user }) => {
 				<h1 className="flex-auto w-64 mb-5 text-2xl font-semibold text-gray-900">
 					Notes
 				</h1>
-				<span
-					onClick={() => setShowModal(true)}
-					className="flex-none w-32 cursor-pointer font-medium text-indigo-600 hover:text-indigo-500"
-				>
-					Clear All
-				</span>
+				{files.length > 0 && (
+					<span
+						onClick={() => setShowModal(true)}
+						className="flex-none w-32 cursor-pointer font-medium text-indigo-600 hover:text-indigo-500"
+					>
+						Clear All
+					</span>
+				)}
 			</header>
 
 			<ul
