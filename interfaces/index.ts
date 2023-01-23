@@ -25,4 +25,5 @@ export interface Note {
 		size: number;
 		last_modified: string;
 	};
+	contents: string | null;
 }

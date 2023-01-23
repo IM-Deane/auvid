@@ -1,27 +1,42 @@
 import { useState, useEffect } from "react";
 
 import { GetServerSidePropsContext } from "next";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import axios from "axios";
-
-import {
-	PaperClipIcon,
-	PencilSquareIcon,
-	XCircleIcon,
-} from "@heroicons/react/20/solid";
 
 import Layout from "../../components/Layout";
 
 import { Note } from "../../interfaces";
 
-const NoteDetails = ({ fileData }: { fileData: Note }) => {
-	const [file, setFile] = useState<Note>(fileData);
+const NoteDetails = ({ fileData, user }: { fileData: Note; user: any }) => {
+	const [file, _] = useState<Note>(fileData);
+	const [fileToDownload, setFileToDownload] = useState<any>("");
 
-	console.log(file);
+	const supabase = useSupabaseClient();
+
+	useEffect(() => {
+		const downloadFileLocally = async () => {
+			try {
+				// download file from storage
+				const { data, error } = await supabase.storage
+					.from("notes")
+					.download(`${user.id}/${file.name}`);
+
+				if (error) throw new Error("Error downloading file");
+
+				// create file from Blob
+				const myFile = new File([data], file.name, {
+					type: data.type,
+				});
+
+				// save URL that can be used to download the file locally
+				setFileToDownload(URL.createObjectURL(myFile));
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		downloadFileLocally();
+	}, []);
 
 	return (
 		<Layout title="Notes | RustleAI">
@@ -59,61 +74,20 @@ const NoteDetails = ({ fileData }: { fileData: Note }) => {
 							</dd>
 						</div>
 						<div className="sm:col-span-2">
-							<dt className="text-sm font-medium text-gray-500">Summary</dt>
-							<dd className="mt-1 text-sm text-gray-900">
-								Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim
-								incididunt cillum culpa consequat. Excepteur qui ipsum aliquip
-								consequat sint. Sit id mollit nulla mollit nostrud in ea officia
-								proident. Irure nostrud pariatur mollit ad adipisicing
-								reprehenderit deserunt qui eu.
+							<dt className="text-sm font-medium text-gray-500">Contents</dt>
+							<dd className="mt-1 text-sm text-gray-900 px-3">
+								{file.contents}
 							</dd>
 						</div>
 						<div className="sm:col-span-2">
-							<dt className="text-sm font-medium text-gray-500">Attachments</dt>
-							<dd className="mt-1 text-sm text-gray-900">
-								<ul
-									role="list"
-									className="divide-y divide-gray-200 rounded-md border border-gray-200"
+							<dd className="float-right mt-1 text-sm text-gray-900">
+								<a
+									href={fileToDownload}
+									download={file.name}
+									className="inline-flex cursor-pointer items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 								>
-									<li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-										<div className="flex w-0 flex-1 items-center">
-											<PaperClipIcon
-												className="h-5 w-5 flex-shrink-0 text-gray-400"
-												aria-hidden="true"
-											/>
-											<span className="ml-2 w-0 flex-1 truncate">
-												resume_back_end_developer.pdf
-											</span>
-										</div>
-										<div className="ml-4 flex-shrink-0">
-											<a
-												href="#"
-												className="font-medium text-indigo-600 hover:text-indigo-500"
-											>
-												Download
-											</a>
-										</div>
-									</li>
-									<li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-										<div className="flex w-0 flex-1 items-center">
-											<PaperClipIcon
-												className="h-5 w-5 flex-shrink-0 text-gray-400"
-												aria-hidden="true"
-											/>
-											<span className="ml-2 w-0 flex-1 truncate">
-												coverletter_back_end_developer.pdf
-											</span>
-										</div>
-										<div className="ml-4 flex-shrink-0">
-											<a
-												href="#"
-												className="font-medium text-indigo-600 hover:text-indigo-500"
-											>
-												Download
-											</a>
-										</div>
-									</li>
-								</ul>
+									Download File
+								</a>
 							</dd>
 						</div>
 					</dl>
@@ -139,22 +113,31 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 			},
 		};
 
-	console.log(ctx.params.name.toString());
 	const userID = session.user.id;
 	// get file matching ID
 	const { data, error } = await supabase.storage.from("notes").list(userID, {
 		search: ctx.params.name.toString(),
 	});
 
-	// TODO: get files inner contents
-
 	if (error) throw new Error(error.message);
-
 	if (!data) throw new Error("File not found");
+
+	// download file to get it's inner contents
+	const downloadResponse = await supabase.storage
+		.from("notes")
+		.download(`${userID}/${ctx.params.name.toString()}`);
+
+	if (downloadResponse.error) throw new Error("Error downloading file");
+	if (!downloadResponse.data) throw new Error("File not found");
+
+	// create new object with response data and file contents
+	const fileData = { ...data[0] };
+	fileData["contents"] = await downloadResponse.data.text();
 
 	return {
 		props: {
-			fileData: data[0],
+			fileData,
+			user: session.user,
 		},
 	};
 };
