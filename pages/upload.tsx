@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 import axios from "axios";
 
+import { useRouter } from "next/router";
+
 import FileUploader from "../components/FileUploader";
 import Layout from "../components/Layout";
 import Alert from "../components/Alert";
@@ -19,6 +21,8 @@ const AudioUpload = () => {
 		status: false,
 		message: "",
 	});
+
+	const router = useRouter();
 
 	const handleUploadResult = (data) => {
 		if (!data) {
@@ -76,7 +80,7 @@ const AudioUpload = () => {
 			if (!uploadedFile || !transcribedText)
 				throw new Error("Missing required fields");
 
-			const response = await axios.post(
+			const { data } = await axios.post(
 				"http://localhost:3000/api/notes/save",
 				{
 					filename: uploadedFile,
@@ -85,9 +89,11 @@ const AudioUpload = () => {
 				}
 			);
 
-			if (!response.data) throw new Error("Error saving notes");
+			if (!data) throw new Error("Error saving notes");
 
 			setShowAlert(true);
+			// redirect to notes page after 3 seconds
+			setTimeout(() => (router.push(`/notes/${data.filename}`), 3000));
 		} catch (error) {
 			if (error.response) {
 				// response with status code other than 2xx
