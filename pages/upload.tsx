@@ -170,14 +170,17 @@ const AudioUpload = () => {
 						<h3 className="text-xl font-semibold text-dark-900">Full Text:</h3>
 						<p className="text-xl text-black p-3">{transcribedText}</p>
 					</div>
-					<div className="mt-4">
-						<LoadingButton
-							isLoading={loading}
-							text={summarizedText ? "Try again" : "Summarize"}
-							loadingText="Summarizing..."
-							handleClick={handleSummarizeText}
-						/>
-					</div>
+					{/* only show button if there's enough text to summarize  */}
+					{transcribedText.length > 15 && (
+						<div className="mt-4">
+							<LoadingButton
+								isLoading={loading}
+								text={summarizedText ? "Try again" : "Summarize"}
+								loadingText="Summarizing..."
+								handleClick={handleSummarizeText}
+							/>
+						</div>
+					)}
 
 					<div className="mt-4">
 						<LoadingButton
