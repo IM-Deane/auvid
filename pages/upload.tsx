@@ -14,6 +14,7 @@ const AudioUpload = () => {
 	const [transcribedText, setTranscribedText] = useState("");
 	const [summarizedText, setSummarizedText] = useState("");
 	const [uploadedFile, setUploadedFile] = useState("");
+	const [isEditing, setIsEditing] = useState(false); // used to render text form
 	const [error, setError] = useState({
 		status: false,
 		message: "",
@@ -29,6 +30,7 @@ const AudioUpload = () => {
 		setTranscribedText(data.transcribedText);
 		setUploadedFile(data.filename);
 		setShowAlert(true);
+		setIsEditing(true);
 	};
 
 	const handleUploadFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +128,7 @@ const AudioUpload = () => {
 			<h1 className="text-2xl font-semibold text-gray-900">Audio</h1>
 			<FileUploader handleResult={handleUploadResult} />
 			{/* render section after file upload */}
-			{uploadedFile && (
+			{isEditing && (
 				<div className="mt-5">
 					<div>
 						<label
@@ -144,17 +146,17 @@ const AudioUpload = () => {
 								onChange={handleUploadFileChange}
 								minLength={5}
 								maxLength={50}
-								className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+								className="block w-1/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 								aria-describedby="filename-input"
 							/>
 						</div>
 						<p className="mt-2 text-sm text-gray-500" id="filename-description">
-							The name of the file
+							A memorable name for your file
 						</p>
 					</div>
 
 					<div className="mt-3">
-						<h2 className="text-xl font-semibold text-dark-900">
+						<h2 className="text-xl my-6 font-semibold text-dark-900">
 							Transcribed Text:
 						</h2>
 						{summarizedText && (
