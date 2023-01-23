@@ -1,3 +1,5 @@
+import fs from "fs";
+
 import { NextApiRequest, NextApiResponse } from "next";
 
 import middleware from "../../middleware/middleware";
@@ -36,9 +38,9 @@ handler.post(async (req, res) => {
 		const timestamp = new Date().toISOString();
 		const filename = `${timestamp}-${files.file.originalFilename}`;
 
-		// add file to public/uploads
+		// create temp file
 		const oldPath = files.file.filepath;
-		const newPath = `./public/uploads/${filename}`;
+		const newPath = `./temp/${filename}`;
 		mv(oldPath, newPath, (err: any) => err && console.log(err));
 
 		// use python to transcribe file's audio to text
@@ -46,7 +48,6 @@ handler.post(async (req, res) => {
 
 		let transcribedText;
 		python.stdout.on("data", (data) => {
-			console.log("Pipe data from python script...");
 			transcribedText = data.toString();
 		});
 
@@ -64,6 +65,14 @@ handler.post(async (req, res) => {
 				files,
 				filename,
 				transcribedText,
+			});
+
+			// cleanup temp file
+			fs.unlink(newPath, (err) => {
+				if (err) {
+					console.error(err);
+					throw new Error("Error removing audio file.");
+				}
 			});
 		});
 	} catch (error: any) {
