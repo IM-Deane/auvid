@@ -25,13 +25,6 @@ const navigation = [
 		current: false,
 	},
 	{
-		name: "Edit Note",
-		href: "/notes/*",
-		icon: PencilSquareIcon,
-		current: false,
-	},
-	{ name: "My Audio", href: "/audio", icon: SpeakerWaveIcon, current: false },
-	{
 		name: "Upload Audio",
 		href: "/upload",
 		icon: ArrowUpOnSquareIcon,

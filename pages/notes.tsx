@@ -28,8 +28,7 @@ const NotesList = () => {
 
 	return (
 		<Layout title="Notes | RustleAI">
-			<h1 className="text-2xl font-semibold text-gray-900">Notes</h1>
-			<p>This is the list page for Notes</p>
+			<h1 className="mb-5 text-2xl font-semibold text-gray-900">Notes</h1>
 
 			<ul
 				role="list"
