@@ -131,7 +131,7 @@ const AudioUpload = () => {
 					/>
 				)}
 			</div>
-			<h1 className="text-2xl font-semibold text-gray-900">Audio</h1>
+			<h1 className="text-2xl font-semibold text-gray-900">Add New Note:</h1>
 			<FileUploader handleResult={handleUploadResult} />
 			{/* render section after file upload */}
 			{isEditing && (

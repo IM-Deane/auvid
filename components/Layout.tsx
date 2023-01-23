@@ -6,28 +6,26 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 
 import {
-	ArrowUpOnSquareIcon,
 	Bars3Icon,
 	DocumentDuplicateIcon,
 	HomeIcon,
-	PencilSquareIcon,
+	PlusCircleIcon,
 	UserCircleIcon,
-	SpeakerWaveIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const navigation = [
 	{ name: "Dashboard", href: "/", icon: HomeIcon, current: true },
 	{
-		name: "Notes",
-		href: "/notes",
-		icon: DocumentDuplicateIcon,
+		name: "Add Note",
+		href: "/upload",
+		icon: PlusCircleIcon,
 		current: false,
 	},
 	{
-		name: "Upload Audio",
-		href: "/upload",
-		icon: ArrowUpOnSquareIcon,
+		name: "Notes",
+		href: "/notes",
+		icon: DocumentDuplicateIcon,
 		current: false,
 	},
 	{ name: "Account", href: "/account", icon: UserCircleIcon, current: false },
