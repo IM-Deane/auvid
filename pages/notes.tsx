@@ -6,14 +6,23 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import Link from "next/link";
 
-import { PencilSquareIcon, XCircleIcon } from "@heroicons/react/20/solid";
+import {
+	PencilSquareIcon,
+	PlusCircleIcon,
+	XCircleIcon,
+} from "@heroicons/react/20/solid";
 
 import Alert from "../components/Alert";
+import DeleteModal from "../components/DeleteModal";
 import Layout from "../components/Layout";
 
 const NotesList = ({ fileList, user }) => {
 	const [files, setFiles] = useState<any[]>(fileList);
-	const [showAlert, setShowAlert] = useState(false);
+	const [showModal, setShowModal] = useState(false);
+	const [showAlert, setShowAlert] = useState({
+		status: false,
+		message: "",
+	});
 	const [error, setError] = useState({
 		status: false,
 		message: "",
@@ -21,7 +30,7 @@ const NotesList = ({ fileList, user }) => {
 
 	const supabase = useSupabaseClient();
 
-	const handleAlertDismiss = () => setShowAlert(false);
+	const handleAlertDismiss = () => setShowAlert({ status: false, message: "" });
 
 	// delete single file
 	const handleDeleteFile = async (filename) => {
@@ -41,93 +50,139 @@ const NotesList = ({ fileList, user }) => {
 				message: "There was a problem deleting the file!",
 			});
 		} finally {
-			setShowAlert(true);
+			setShowAlert({ status: true, message: "File successfully deleted!" });
 		}
 	};
 
-	// TODO: remove all file from user's folder
+	// remove all file from user's folder
 	const handleClearAllFiles = async () => {
-		// TODO: create list of all file paths in user's folder
-		// const { data, error } = await supabase.storage
-		// 	.from("notes")
-		// 	.remove([`${user.id}/${filename}`]);
+		try {
+			// create list of all file paths in user's folder
+			const filesToDelete = files.map((file) => `${user.id}/${file.name}`);
+
+			const { error } = await supabase.storage
+				.from("notes")
+				.remove(filesToDelete);
+
+			if (error) throw new Error(error.message);
+			setFiles([]); // remove all files from state
+		} catch (error) {
+			console.log(error);
+			setError({
+				status: true,
+				message: "There was a problem clearing the files!",
+			});
+		} finally {
+			setShowModal(false); // close modal
+			setShowAlert({
+				status: true,
+				message: "All files were successfully removed!",
+			});
+		}
 	};
 
 	useEffect(() => {
 		// hide alert after 5 seconds
-		if (showAlert) setTimeout(() => setShowAlert(false), 5000);
+		if (showAlert)
+			setTimeout(() => setShowAlert({ status: false, message: "" }), 5000);
 	}, [showAlert]);
 
 	return (
 		<Layout title="Notes | RustleAI">
 			<div className="my-4 h-10">
-				{showAlert && (
+				{showAlert.status && (
 					<Alert
 						handleAlertDismiss={handleAlertDismiss}
-						text={error.status ? error.message : "File successfully deleted!"}
+						text={error.status ? error.message : showAlert.message}
 						isError={error.status}
 					/>
 				)}
 			</div>
-			<h1 className="mb-5 text-2xl font-semibold text-gray-900">Notes</h1>
+			<header className="flex justify-center items-center">
+				<h1 className="flex-auto w-64 mb-5 text-2xl font-semibold text-gray-900">
+					Notes
+				</h1>
+				<span
+					onClick={() => setShowModal(true)}
+					className="flex-none w-32 cursor-pointer font-medium text-indigo-600 hover:text-indigo-500"
+				>
+					Clear All
+				</span>
+			</header>
 
 			<ul
 				role="list"
 				className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
 			>
-				{files.map((file) => (
-					<li
-						key={file.id}
-						className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow"
-					>
-						<div className="flex w-full items-center justify-between space-x-6 p-6">
-							<div className="flex-1 truncate">
-								<div className="flex items-center space-x-3">
-									<h3 className="truncate text-sm font-medium text-gray-900">
-										{file.name}
-									</h3>
-									<span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-										Size: {file.metadata.size} bytes
-									</span>
-								</div>
-								{/* TODO: add description? */}
-								<p className="mt-1 truncate text-sm text-gray-500">
-									Last accessed:{" "}
-									{new Date(file.last_accessed_at).toDateString()}
-								</p>
-							</div>
-						</div>
-						<div>
-							<div className="-mt-px flex divide-x divide-gray-200">
-								<div className="flex w-0 flex-1">
-									<button
-										onClick={() => handleDeleteFile(file.name)}
-										className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
-									>
-										<XCircleIcon
-											className="h-5 w-5 text-gray-400"
-											aria-hidden="true"
-										/>
-										<span className="ml-3">Remove</span>
-									</button>
-								</div>
-								<div className="-ml-px flex w-0 flex-1">
-									<Link
-										href={`/notes/${file.name}`}
-										className="relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
-									>
-										<PencilSquareIcon
-											className="h-5 w-5 text-gray-400"
-											aria-hidden="true"
-										/>
-										<span className="ml-3">Edit</span>
-									</Link>
+				{!files.length ? (
+					<p>
+						Nothing to see here...{" "}
+						<Link href="/upload">
+							<span className="font-medium text-indigo-600 hover:text-indigo-500">
+								Add a new note <PlusCircleIcon className="w-4 h-4 inline" />
+							</span>
+						</Link>
+					</p>
+				) : (
+					files.map((file) => (
+						<li
+							key={file.id}
+							className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow"
+						>
+							<div className="flex w-full items-center justify-between space-x-6 p-6">
+								<div className="flex-1 truncate">
+									<div className="flex items-center space-x-3">
+										<h3 className="truncate text-sm font-medium text-gray-900">
+											{file.name}
+										</h3>
+										<span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+											Size: {file.metadata.size} bytes
+										</span>
+									</div>
+									{/* TODO: add description? */}
+									<p className="mt-1 truncate text-sm text-gray-500">
+										Last accessed:{" "}
+										{new Date(file.last_accessed_at).toDateString()}
+									</p>
 								</div>
 							</div>
-						</div>
-					</li>
-				))}
+							<div>
+								<div className="-mt-px flex divide-x divide-gray-200">
+									<div className="flex w-0 flex-1">
+										<button
+											onClick={() => handleDeleteFile(file.name)}
+											className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
+										>
+											<XCircleIcon
+												className="h-5 w-5 text-gray-400"
+												aria-hidden="true"
+											/>
+											<span className="ml-3">Remove</span>
+										</button>
+									</div>
+									<div className="-ml-px flex w-0 flex-1">
+										<Link
+											href={`/notes/${file.name}`}
+											className="relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
+										>
+											<PencilSquareIcon
+												className="h-5 w-5 text-gray-400"
+												aria-hidden="true"
+											/>
+											<span className="ml-3">Edit</span>
+										</Link>
+									</div>
+								</div>
+							</div>
+						</li>
+					))
+				)}
 			</ul>
+			<DeleteModal
+				open={showModal}
+				setOpen={setShowModal}
+				handleDeleteNotes={handleClearAllFiles}
+			/>
 		</Layout>
 	);
 };
