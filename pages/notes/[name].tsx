@@ -70,7 +70,9 @@ const NoteDetails = ({ fileData, user }: { fileData: Note; user: any }) => {
 						<div className="sm:col-span-1">
 							<dt className="text-sm font-medium text-gray-500">File Size</dt>
 							<dd className="mt-1 text-sm text-gray-900">
-								{file.metadata.size} bytes
+								<span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+									{file.metadata.size} bytes
+								</span>
 							</dd>
 						</div>
 						<div className="sm:col-span-2">
