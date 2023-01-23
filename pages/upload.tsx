@@ -9,6 +9,7 @@ import LoadingButton from "../components/LoadingButton";
 
 const AudioUpload = () => {
 	const [loading, setLoading] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
 	const [showAlert, setShowAlert] = useState(false);
 	const [transcribedText, setTranscribedText] = useState("");
 	const [summarizedText, setSummarizedText] = useState("");
@@ -28,6 +29,10 @@ const AudioUpload = () => {
 		setTranscribedText(data.transcribedText);
 		setUploadedFile(data.filename);
 		setShowAlert(true);
+	};
+
+	const handleUploadFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setUploadedFile(e.target.value);
 	};
 
 	const handleAlertDismiss = () => setShowAlert(false);
@@ -62,6 +67,46 @@ const AudioUpload = () => {
 		}
 	};
 
+	const handleSaveNotes = async () => {
+		setIsSaving(true);
+
+		try {
+			if (!uploadedFile || !transcribedText)
+				throw new Error("Missing required fields");
+
+			const response = await axios.post(
+				"http://localhost:3000/api/notes/save",
+				{
+					filename: uploadedFile,
+					fullText: transcribedText,
+					notes: summarizedText, // this can be empty
+				}
+			);
+
+			if (!response.data) throw new Error("Error saving notes");
+
+			setShowAlert(true);
+		} catch (error) {
+			if (error.response) {
+				// response with status code other than 2xx
+				console.log(error.response.data);
+				console.log(error.response.status);
+				console.log(error.response.headers);
+			} else if (error.request) {
+				// no response from server
+				console.log(error.request);
+			} else {
+				// something wrong with request
+				console.log(error);
+			}
+			setError({ status: true, message: "Error saving notes" });
+			setShowAlert(true);
+			console.log(error.config);
+		} finally {
+			setIsSaving(false);
+		}
+	};
+
 	useEffect(() => {
 		// hide alert after 5 seconds
 		if (showAlert) setTimeout(() => setShowAlert(false), 5000);
@@ -84,8 +129,27 @@ const AudioUpload = () => {
 			{uploadedFile && (
 				<div className="mt-5">
 					<div>
-						<p className="text-base text-black">
-							File: <strong>{uploadedFile}</strong>
+						<label
+							htmlFor="email"
+							className="block text-sm font-medium text-gray-700"
+						>
+							Filename:
+						</label>
+						<div className="mt-1">
+							<input
+								type="text"
+								name="filename"
+								id="filename"
+								value={uploadedFile}
+								onChange={handleUploadFileChange}
+								minLength={5}
+								maxLength={50}
+								className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+								aria-describedby="filename-input"
+							/>
+						</div>
+						<p className="mt-2 text-sm text-gray-500" id="filename-description">
+							The name of the file
 						</p>
 					</div>
 
@@ -110,6 +174,15 @@ const AudioUpload = () => {
 							text={summarizedText ? "Try again" : "Summarize"}
 							loadingText="Summarizing..."
 							handleClick={handleSummarizeText}
+						/>
+					</div>
+
+					<div className="mt-4">
+						<LoadingButton
+							isLoading={isSaving}
+							text="Save to notes"
+							loadingText="Saving..."
+							handleClick={handleSaveNotes}
 						/>
 					</div>
 				</div>
