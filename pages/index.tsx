@@ -16,7 +16,7 @@ const IndexPage = () => {
 	) : (
 		<Layout title="Home | RustleAI">
 			<h1 className="text-2xl font-semibold text-gray-900">
-				Hello RustleAI 👋
+				Welcome to RustleAI 👋
 			</h1>
 		</Layout>
 	);
