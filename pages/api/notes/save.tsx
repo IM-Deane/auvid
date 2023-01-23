@@ -53,8 +53,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 
 		res.status(200).json({ message: "Successfully uploaded files" });
-	} catch (err: any) {
-		res.status(500).json({ message: err.message });
+	} catch (error: any) {
+		res.status(500).json({ message: error.message });
 	}
 };
 

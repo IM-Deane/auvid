@@ -8,6 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
 	ArrowUpOnSquareIcon,
 	Bars3Icon,
+	DocumentDuplicateIcon,
 	HomeIcon,
 	PencilSquareIcon,
 	UserCircleIcon,
@@ -17,7 +18,18 @@ import {
 
 const navigation = [
 	{ name: "Dashboard", href: "/", icon: HomeIcon, current: true },
-	{ name: "Notes", href: "/notes", icon: PencilSquareIcon, current: false },
+	{
+		name: "Notes",
+		href: "/notes",
+		icon: DocumentDuplicateIcon,
+		current: false,
+	},
+	{
+		name: "Edit Note",
+		href: "/notes/*",
+		icon: PencilSquareIcon,
+		current: false,
+	},
 	{ name: "My Audio", href: "/audio", icon: SpeakerWaveIcon, current: false },
 	{
 		name: "Upload Audio",

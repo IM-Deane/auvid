@@ -14,3 +14,15 @@ export interface FullUser extends User {
 		updated_at: string | null;
 	};
 }
+
+export interface Note {
+	id: string;
+	name: string;
+	last_accessed_at: string;
+	created_at: string;
+	updated_at: string;
+	metadata: {
+		size: number;
+		last_modified: string;
+	};
+}
