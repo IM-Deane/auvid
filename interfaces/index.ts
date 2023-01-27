@@ -27,3 +27,9 @@ export interface Note {
 	};
 	contents: string | null;
 }
+
+export interface File {
+	id: number;
+	name: string;
+	ext: string;
+}

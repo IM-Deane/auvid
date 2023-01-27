@@ -1,28 +1,19 @@
 import { useState, useEffect } from "react";
 
-import axios from "axios";
-
-import { useRouter } from "next/router";
-
 import FileUploader from "../components/FileUploader";
+import FileDataCard from "../components/FileDataCard";
 import Layout from "../components/Layout";
 import Alert from "../components/Alert";
-import LoadingButton from "../components/LoadingButton";
 
 const AudioUpload = () => {
-	const [loading, setLoading] = useState(false);
-	const [isSaving, setIsSaving] = useState(false);
 	const [showAlert, setShowAlert] = useState(false);
 	const [transcribedText, setTranscribedText] = useState("");
-	const [summarizedText, setSummarizedText] = useState("");
 	const [uploadedFile, setUploadedFile] = useState("");
 	const [isEditing, setIsEditing] = useState(false); // used to render text form
 	const [error, setError] = useState({
 		status: false,
 		message: "",
 	});
-
-	const router = useRouter();
 
 	const handleUploadResult = (data) => {
 		if (!data) {
@@ -37,83 +28,7 @@ const AudioUpload = () => {
 		setIsEditing(true);
 	};
 
-	const handleUploadFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setUploadedFile(e.target.value);
-	};
-
 	const handleAlertDismiss = () => setShowAlert(false);
-
-	const handleSummarizeText = async () => {
-		setLoading(true);
-
-		try {
-			const response = await axios.post("http://localhost:3000/api/summarize", {
-				transcribedText,
-			});
-
-			if (!response.data) throw new Error("Error summarizing text");
-
-			setSummarizedText(response.data);
-		} catch (error) {
-			if (error.response) {
-				// response with status code other than 2xx
-				console.log(error.response.data);
-				console.log(error.response.status);
-				console.log(error.response.headers);
-			} else if (error.request) {
-				// no response from server
-				console.log(error.request);
-			} else {
-				// something wrong with request
-				console.log(error);
-			}
-			console.log(error.config);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	const handleSaveNotes = async () => {
-		setIsSaving(true);
-
-		try {
-			if (!uploadedFile || !transcribedText)
-				throw new Error("Missing required fields");
-
-			const { data } = await axios.post(
-				"http://localhost:3000/api/notes/save",
-				{
-					filename: uploadedFile,
-					fullText: transcribedText,
-					notes: summarizedText, // this can be empty
-				}
-			);
-
-			if (!data) throw new Error("Error saving notes");
-
-			setShowAlert(true);
-			// redirect to notes page after 3 seconds
-			setTimeout(() => (router.push(`/notes/${data.filename}`), 3000));
-		} catch (error) {
-			if (error.response) {
-				// response with status code other than 2xx
-				console.log(error.response.data);
-				console.log(error.response.status);
-				console.log(error.response.headers);
-			} else if (error.request) {
-				// no response from server
-				console.log(error.request);
-			} else {
-				// something wrong with request
-				console.log(error);
-			}
-			setError({ status: true, message: "Error saving notes" });
-			setShowAlert(true);
-			console.log(error.config);
-		} finally {
-			setIsSaving(false);
-		}
-	};
 
 	useEffect(() => {
 		// hide alert after 5 seconds
@@ -131,13 +46,24 @@ const AudioUpload = () => {
 					/>
 				)}
 			</div>
-			<h1 className="text-2xl font-semibold text-gray-900">Add New Note:</h1>
+			<h1 className="text-2xl font-semibold text-gray-900">New Note:</h1>
 
-			<FileUploader handleResult={handleUploadResult} />
+			<div className="my-7 py-5 px-8">
+				<FileUploader handleResult={handleUploadResult} />
+			</div>
 			{/* render section after file upload */}
 			{isEditing && (
-				<div className="mt-5">
-					<div>
+				<div className="mt-4 mb-7 py-5 px-8">
+					<FileDataCard
+						fileData={{
+							filename: uploadedFile,
+							transcribedText,
+						}}
+						setShowAlert={setShowAlert}
+						setError={setError}
+					/>
+
+					{/* <div>
 						<label
 							htmlFor="email"
 							className="block text-sm font-medium text-gray-700"
@@ -160,9 +86,9 @@ const AudioUpload = () => {
 						<p className="mt-2 text-sm text-gray-500" id="filename-description">
 							A memorable name for your file
 						</p>
-					</div>
+					</div> */}
 
-					<div className="mt-3">
+					{/* <div className="mt-3">
 						<h2 className="text-xl my-6 font-semibold text-dark-900">
 							Transcribed Text:
 						</h2>
@@ -176,9 +102,9 @@ const AudioUpload = () => {
 						)}
 						<h3 className="text-xl font-semibold text-dark-900">Full Text:</h3>
 						<p className="text-xl text-black p-3">{transcribedText}</p>
-					</div>
+					</div> */}
 					{/* only show button if there's enough text to summarize  */}
-					{transcribedText.length > 15 && (
+					{/* {transcribedText.length > 15 && (
 						<div className="mt-4">
 							<LoadingButton
 								isLoading={loading}
@@ -196,7 +122,7 @@ const AudioUpload = () => {
 							loadingText="Saving..."
 							handleClick={handleSaveNotes}
 						/>
-					</div>
+					</div>*/}
 				</div>
 			)}
 		</Layout>
