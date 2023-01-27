@@ -8,29 +8,38 @@ import { File } from "../interfaces";
 import LoadingButton from "./LoadingButton";
 import SelectInput from "./SelectInput";
 
+import { trimEdgesAndCapitalizeFirstLetter } from "../utils";
 import { fileTypes } from "../utils/enums";
 
 function FileUploadCard({ fileData, setShowAlert, setError }) {
-	const { transcribedText } = fileData;
+	let { transcribedText } = fileData;
+	// format transcription
+	transcribedText = trimEdgesAndCapitalizeFirstLetter(transcribedText);
 
 	const [filename, setFilename] = useState<string>(fileData.filename);
 	const [documentTitle, setDocumentTitle] = useState<string>("");
-	const [summarizedText, setSummarizedText] = useState("");
+	const [summarizedText, setSummarizedText] = useState<string>("");
 	const [filetype, setFileType] = useState<File>(fileTypes[0]); // default is TXT
 	const [loading, setLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
-	const [wordCount, setWordCount] = useState<number>(0);
+	const [transcriptWordCount, setTranscriptWordCount] = useState<number>(0);
+	const [summaryWordCount, setSummaryWordCount] = useState<number>(0);
 
 	const [filenameError, setFilenameError] = useState<string>("");
 	const [documentTitleError, setDocumentTitleError] = useState<string>("");
 
 	const router = useRouter();
 
-	const getTranscriptionWordCount = () => {
+	const getWordCounts = () => {
 		if (!transcribedText) return;
 
+		if (summarizedText) {
+			const summaryWords = summarizedText.trim().split(" ");
+			setSummaryWordCount(summaryWords.length);
+		}
+
 		const words = transcribedText.trim().split(" ");
-		setWordCount(words.length);
+		setTranscriptWordCount(words.length);
 	};
 
 	const handleFileNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +66,8 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 
 			if (!response.data) throw new Error("Error summarizing text");
 
-			setSummarizedText(response.data);
+			const formattedNotes = trimEdgesAndCapitalizeFirstLetter(response.data);
+			setSummarizedText(formattedNotes);
 		} catch (error) {
 			if (error.response) {
 				// response with status code other than 2xx
@@ -81,6 +91,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 		setIsSaving(true);
 
 		try {
+			// validate data
 			if (!filename) {
 				setFilenameError("Filename is required");
 				throw new Error("Filename is required");
@@ -99,7 +110,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 				{
 					filename: filenameWithExt,
 					fullText: transcribedText,
-					notes: summarizedText, // this can be empty
+					summary: summarizedText, // this can be empty
 					filetype: filetype.ext,
 					documentTitle,
 				}
@@ -132,8 +143,8 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 	};
 
 	useEffect(() => {
-		getTranscriptionWordCount();
-	}, []);
+		getWordCounts();
+	}, [summarizedText, transcribedText]);
 
 	return (
 		<div>
@@ -220,7 +231,16 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 							</dd>
 						</div>
 						<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-							<dt className="text-sm font-medium text-gray-500">Summary</dt>
+							<dt className="text-sm font-medium text-gray-500">
+								Summary{" "}
+								{summarizedText && (
+									<span>
+										{summaryWordCount === 1
+											? `(${summaryWordCount} word)`
+											: `(${summaryWordCount} words)`}
+									</span>
+								)}
+							</dt>
 							<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
 								{summarizedText}
 							</dd>
@@ -239,9 +259,13 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 						<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
 							<dt className="text-sm font-medium text-gray-500">
 								Full Transcription{" "}
-								{wordCount === 1
-									? `(${wordCount} word)`
-									: `(${wordCount} words)`}
+								{transcribedText && (
+									<span>
+										{transcriptWordCount === 1
+											? `(${transcriptWordCount} word)`
+											: `(${transcriptWordCount} words)`}
+									</span>
+								)}
 							</dt>
 							<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
 								{transcribedText}
