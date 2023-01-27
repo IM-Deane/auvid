@@ -1,3 +1,5 @@
+import fs from "fs";
+
 import { NextApiRequest, NextApiResponse } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
@@ -23,38 +25,47 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		// get user id
 		const userID = session.user.id;
-		const { filename, fullText, notes, filetype } = req.body;
+		const { filename, documentTitle, fullText, notes } = req.body;
 
 		// convert filename to filepath
-		const textFilename = filename.replace(/\s+/g, "-").toLowerCase();
+		const filenameWithExt = filename.replace(/\s+/g, "-").toLowerCase();
+		const tempFilePath = `temp/${filenameWithExt}`;
 
-		// save to user folder (prefixed by user id)
-		const { error } = await supabase.storage
-			.from("notes")
-			.upload(`${userID}/${textFilename}`, fullText);
+		// 1. Append the document title
+		let fileContent = `${documentTitle}\n\n`;
 
-		if (error) {
-			console.log(error);
-			throw new Error("Error uploading transcript!");
-		}
+		// 2. If a notes summary exists, append to string
+		if (notes) fileContent += `Summary:\n\n${notes.trim()}\n\n`;
 
-		if (notes) {
-			const notesFilename =
-				filename.replace(/\s+/g, "-").toLowerCase() + `-notes${filetype}`;
+		// 3. Add the full transcript to string
+		fileContent += `Full Transcript:\n\n${fullText.trim()}`;
 
-			const { error } = await supabase.storage
-				.from("notes")
-				.upload(`${userID}/${notesFilename}`, notes);
+		// write file to temp folder
+		fs.writeFile(tempFilePath, fileContent, (err) => {
+			if (err) throw new Error(err.message);
 
-			if (error) {
-				console.log(error);
-				throw new Error("Error uploading notes!");
-			}
-		}
+			// read contents from temp file
+			fs.readFile(tempFilePath, "utf8", async (err, data) => {
+				if (err) throw new Error(err.message);
 
-		res
-			.status(200)
-			.json({ message: "Successfully uploaded files", filename: textFilename });
+				// 4. save the file to user folder (prefixed by user id)
+				const { error } = await supabase.storage
+					.from("notes")
+					.upload(`${userID}/${filenameWithExt}`, data);
+
+				if (error) throw new Error(error.message);
+
+				res.status(200).json({
+					message: "Successfully uploaded file",
+					filename: filenameWithExt,
+				});
+
+				// delete file from temp folder
+				fs.unlink(tempFilePath, (err) => {
+					if (err) throw new Error(err.message);
+				});
+			});
+		});
 	} catch (error: any) {
 		res.status(500).json({ message: error.message });
 	}
