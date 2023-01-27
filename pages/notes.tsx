@@ -143,8 +143,7 @@ const NotesList = ({ fileList, user }) => {
 									</div>
 									{/* TODO: add description? */}
 									<p className="mt-1 truncate text-sm text-gray-500">
-										Last accessed:{" "}
-										{new Date(file.last_accessed_at).toDateString()}
+										Created on: {new Date(file.created_at).toDateString()}
 									</p>
 								</div>
 							</div>
@@ -208,7 +207,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const userID = session.user.id;
 	// get all files from user folder
 	const { data, error } = await supabase.storage.from("notes").list(userID, {
-		sortBy: { column: "created_at", order: "asc" },
+		sortBy: { column: "created_at", order: "desc" },
 	});
 
 	if (error) throw new Error(error.message);
