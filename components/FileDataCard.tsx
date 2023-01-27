@@ -13,13 +13,16 @@ import { fileTypes } from "../utils/enums";
 function FileUploadCard({ fileData, setShowAlert, setError }) {
 	const { transcribedText } = fileData;
 
-	const [filename, setFilename] = useState(fileData.filename);
+	const [filename, setFilename] = useState<string>(fileData.filename);
+	const [documentTitle, setDocumentTitle] = useState<string>("");
 	const [summarizedText, setSummarizedText] = useState("");
 	const [filetype, setFileType] = useState<File>(fileTypes[0]); // default is TXT
 	const [loading, setLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
-	const [filenameError, setFilenameError] = useState<string>("");
 	const [wordCount, setWordCount] = useState<number>(0);
+
+	const [filenameError, setFilenameError] = useState<string>("");
+	const [documentTitleError, setDocumentTitleError] = useState<string>("");
 
 	const router = useRouter();
 
@@ -34,6 +37,14 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 		if (filenameError) setFilenameError(""); // clear error
 
 		setFilename(e.target.value);
+	};
+
+	const handleDocumentTitleChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		if (documentTitleError) setDocumentTitleError(""); // clear error
+
+		setDocumentTitle(e.target.value);
 	};
 
 	const handleSummarizeText = async () => {
@@ -75,12 +86,13 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 				throw new Error("Filename is required");
 			} else if (!transcribedText) {
 				throw new Error("Transcribed text is required");
+			} else if (!documentTitle) {
+				setDocumentTitleError("Document title is required");
+				throw new Error("Document title is required");
 			}
 
 			// add selected extension to filename
 			const filenameWithExt = `${filename}${filetype.ext}`;
-			console.log(filenameWithExt);
-			console.log(filetype.ext);
 
 			const { data } = await axios.post(
 				"http://localhost:3000/api/notes/save",
@@ -89,6 +101,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 					fullText: transcribedText,
 					notes: summarizedText, // this can be empty
 					filetype: filetype.ext,
+					documentTitle,
 				}
 			);
 
@@ -147,7 +160,9 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 									minLength={5}
 									maxLength={50}
 									required
-									className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+									className={`block w-full rounded-md border-${
+										filenameError ? "red" : "gray"
+									}-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`}
 									aria-describedby="filename-input"
 								/>
 								<p
@@ -171,6 +186,37 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 									setSelected={setFileType}
 									width="w-1/4"
 								/>
+							</dd>
+						</div>
+						<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+							<dt className="text-sm font-medium text-gray-500">
+								Document Title
+							</dt>
+							<dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
+								<input
+									type="text"
+									name="documentTitle"
+									id="documentTitle"
+									value={documentTitle}
+									onChange={handleDocumentTitleChange}
+									minLength={5}
+									maxLength={50}
+									required
+									className={`block w-full rounded-md border-${
+										documentTitleError ? "red" : "gray"
+									}-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`}
+									aria-describedby="document-title"
+								/>
+								<p
+									className={`mt-2 text-sm text-${
+										documentTitleError ? "red" : "gray"
+									}-500`}
+									id="document-title-description"
+								>
+									{documentTitleError
+										? documentTitleError
+										: "The title of your document"}
+								</p>
 							</dd>
 						</div>
 						<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
