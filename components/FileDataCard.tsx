@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import axios from "axios";
@@ -15,13 +15,24 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 
 	const [filename, setFilename] = useState(fileData.filename);
 	const [summarizedText, setSummarizedText] = useState("");
-	const [filetype, setFileType] = useState<File>(fileTypes[0]); // default is PDF
+	const [filetype, setFileType] = useState<File>(fileTypes[0]); // default is TXT
 	const [loading, setLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
+	const [filenameError, setFilenameError] = useState<string>("");
+	const [wordCount, setWordCount] = useState<number>(0);
 
 	const router = useRouter();
 
+	const getTranscriptionWordCount = () => {
+		if (!transcribedText) return;
+
+		const words = transcribedText.trim().split(" ");
+		setWordCount(words.length);
+	};
+
 	const handleFileNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (filenameError) setFilenameError(""); // clear error
+
 		setFilename(e.target.value);
 	};
 
@@ -59,15 +70,25 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 		setIsSaving(true);
 
 		try {
-			if (!filename || !transcribedText)
-				throw new Error("Missing required fields");
+			if (!filename) {
+				setFilenameError("Filename is required");
+				throw new Error("Filename is required");
+			} else if (!transcribedText) {
+				throw new Error("Transcribed text is required");
+			}
+
+			// add selected extension to filename
+			const filenameWithExt = `${filename}${filetype.ext}`;
+			console.log(filenameWithExt);
+			console.log(filetype.ext);
 
 			const { data } = await axios.post(
 				"http://localhost:3000/api/notes/save",
 				{
-					filename: filename,
+					filename: filenameWithExt,
 					fullText: transcribedText,
 					notes: summarizedText, // this can be empty
+					filetype: filetype.ext,
 				}
 			);
 
@@ -97,6 +118,10 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 		}
 	};
 
+	useEffect(() => {
+		getTranscriptionWordCount();
+	}, []);
+
 	return (
 		<div>
 			<div className="overflow-hidden bg-white shadow sm:rounded-lg">
@@ -111,38 +136,31 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 				<div className="border-t border-gray-200 px-4 py-5 sm:p-0">
 					<dl className="sm:divide-y sm:divide-gray-200">
 						<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-							{/* <dt className="text-sm font-medium text-gray-500">Filename</dt>
-							<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-								{filename}
-							</dd> */}
-
-							<div>
-								<label
-									htmlFor="email"
-									className="block text-sm font-medium text-gray-700"
-								>
-									Filename:
-								</label>
-								<div className="mt-1">
-									<input
-										type="text"
-										name="filename"
-										id="filename"
-										value={filename}
-										onChange={handleFileNameChange}
-										minLength={5}
-										maxLength={50}
-										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										aria-describedby="filename-input"
-									/>
-								</div>
+							<dt className="text-sm font-medium text-gray-500">Filename</dt>
+							<dd className="mt-1 text-sm text-gray-900 sm:col-span-1 sm:mt-0">
+								<input
+									type="text"
+									name="filename"
+									id="filename"
+									value={filename}
+									onChange={handleFileNameChange}
+									minLength={5}
+									maxLength={50}
+									required
+									className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+									aria-describedby="filename-input"
+								/>
 								<p
-									className="mt-2 text-sm text-gray-500"
+									className={`mt-2 text-sm text-${
+										filenameError ? "red" : "gray"
+									}-500`}
 									id="filename-description"
 								>
-									Choose a memorable name for your file
+									{filenameError
+										? filenameError
+										: "Choose a memorable name for your file"}
 								</p>
-							</div>
+							</dd>
 						</div>
 						<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
 							<dt className="text-sm font-medium text-gray-500">File Type</dt>
@@ -151,7 +169,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 									label=""
 									selected={filetype}
 									setSelected={setFileType}
-									width="w-1/2"
+									width="w-1/4"
 								/>
 							</dd>
 						</div>
@@ -173,7 +191,12 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 							)}
 						</div>
 						<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-							<dt className="text-sm font-medium text-gray-500">Full Text</dt>
+							<dt className="text-sm font-medium text-gray-500">
+								Full Transcription{" "}
+								{wordCount === 1
+									? `(${wordCount} word)`
+									: `(${wordCount} words)`}
+							</dt>
 							<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
 								{transcribedText}
 							</dd>

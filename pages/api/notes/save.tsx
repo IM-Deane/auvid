@@ -23,10 +23,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		// get user id
 		const userID = session.user.id;
-		const { filename, fullText, notes } = req.body;
+		const { filename, fullText, notes, filetype } = req.body;
 
 		// convert filename to filepath
-		const textFilename = filename.replace(/\s+/g, "-").toLowerCase() + ".txt";
+		const textFilename = filename.replace(/\s+/g, "-").toLowerCase();
 
 		// save to user folder (prefixed by user id)
 		const { error } = await supabase.storage
@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		if (notes) {
 			const notesFilename =
-				filename.replace(/\s+/g, "-").toLowerCase() + "-notes.txt";
+				filename.replace(/\s+/g, "-").toLowerCase() + `-notes${filetype}`;
 
 			const { error } = await supabase.storage
 				.from("notes")
