@@ -73,10 +73,12 @@ function uploadAndTranscribeAudio(req, res) {
 			});
 
 			python.on("close", () => {
+				const filenameNoExt = filename.substring(0, filename.lastIndexOf("."));
+
 				// send file data
 				res.status(200).json({
 					result: "File uploaded and transcribed successfully",
-					filename,
+					filename: filenameNoExt,
 					transcribedText,
 				});
 
