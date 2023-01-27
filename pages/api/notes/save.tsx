@@ -25,44 +25,72 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		// get user id
 		const userID = session.user.id;
-		const { filename, documentTitle, fullText, notes } = req.body;
+		const { filename, documentTitle, fullText, summary } = req.body;
 
 		// convert filename to filepath
 		const filenameWithExt = filename.replace(/\s+/g, "-").toLowerCase();
 		const tempFilePath = `temp/${filenameWithExt}`;
 
+		// create a write stream (in append mode)
+		const writeStream = fs.createWriteStream(tempFilePath, { flags: "a" });
+
 		// 1. Append the document title
-		let fileContent = `${documentTitle}\n\n`;
-
-		// 2. If a notes summary exists, append to string
-		if (notes) fileContent += `Summary:\n\n${notes.trim()}\n\n`;
-
-		// 3. Add the full transcript to string
-		fileContent += `Full Transcript:\n\n${fullText.trim()}`;
-
-		// write file to temp folder
-		fs.writeFile(tempFilePath, fileContent, (err) => {
+		writeStream.write(`${documentTitle}\n\n`, (err) => {
 			if (err) throw new Error(err.message);
 
-			// read contents from temp file
+			console.log("ADDED: [ DOCUMENT TITLE ]");
+		});
+
+		// 2. If a summary exists append to file
+		if (summary)
+			writeStream.write(`Summary:\n${summary}\n\n`, (err) => {
+				if (err) throw new Error(err.message);
+
+				console.log("ADDED: [ SUMMARY ]");
+			});
+
+		// 3. Append transcript
+		writeStream.write(`Full Transcript:\n${fullText}\n\n`, (err) => {
+			if (err) throw new Error(err.message);
+			console.log("ADDED: [ TRANSCRIPT ]");
+		});
+
+		writeStream.end(); // finished writing to file
+
+		writeStream.on("finish", () => {
+			writeStream.close();
+			console.log("FINISHED WRITING TO FILE...");
+
 			fs.readFile(tempFilePath, "utf8", async (err, data) => {
 				if (err) throw new Error(err.message);
+
+				console.log("UPLOADING CONTENTS TO WEB STORAGE...");
 
 				// 4. save the file to user folder (prefixed by user id)
 				const { error } = await supabase.storage
 					.from("notes")
-					.upload(`${userID}/${filenameWithExt}`, data);
+					.upload(`${userID}/${filenameWithExt}`, data, {
+						cacheControl: "3600", // cache for 1 hour
+						contentType: "text/plain",
+						upsert: true, // overwrite existing file
+					});
 
 				if (error) throw new Error(error.message);
+
+				console.log("SUCCESSFULLY UPLOADED FILE...");
 
 				res.status(200).json({
 					message: "Successfully uploaded file",
 					filename: filenameWithExt,
 				});
 
+				console.log("REMOVING TEMPORARY FILES...");
+
 				// delete file from temp folder
 				fs.unlink(tempFilePath, (err) => {
 					if (err) throw new Error(err.message);
+
+					console.log("DONE.");
 				});
 			});
 		});
