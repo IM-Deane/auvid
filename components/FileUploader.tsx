@@ -141,51 +141,53 @@ function FileUploader({ handleResult }) {
 		<div className="mt-2">
 			<div className="mt-5 md:col-span-2 md:mt-0">
 				{/* Progress bar */}
-				{currentFile && (
-					<div className="mt-6 mb-7">
-						<h4 className="sr-only">Status</h4>
-						<p className="text-sm font-medium text-gray-900">
-							{uploadProgress < 100 && transcribeProgress < 100
-								? "Creating new note..."
-								: ""}
-						</p>
-						<div className="mt-6" aria-hidden="true">
-							{/* upload segment */}
-							<div className="overflow-hidden rounded-full bg-gray-200">
-								<div
-									className="h-2 rounded-full bg-indigo-600"
-									style={{
-										width: `${getTotalProgress()}%`,
-									}}
-								/>
-							</div>
-							<div className="mt-6 hidden grid-cols-4 text-sm font-medium text-gray-600 sm:grid">
-								<div className="text-indigo-600">Uploading file</div>
-								<div
-									className={`text-center ${
-										uploadProgress === 100 ? "text-indigo-600" : ""
-									}`}
-								>
-									Transcribing audio
+				<div className="my-6 py-5">
+					{currentFile && (
+						<div className="min-h-24">
+							<h4 className="sr-only">Status</h4>
+							<p className="text-sm font-medium text-gray-900">
+								{uploadProgress < 100 && transcribeProgress < 100
+									? "Creating new note..."
+									: ""}
+							</p>
+							<div className="mt-6" aria-hidden="true">
+								{/* upload segment */}
+								<div className="overflow-hidden rounded-full bg-gray-200">
+									<div
+										className="h-2 rounded-full bg-indigo-600"
+										style={{
+											width: `${getTotalProgress()}%`,
+										}}
+									/>
 								</div>
-								<div
-									className={`text-center ${
-										transcribeProgress >= 50 ? "text-indigo-600" : ""
-									}`}
-								>
-									Saving changes
-								</div>
-								<div
-									className={`text-right ${
-										transcribeProgress === 100 ? "text-indigo-600" : ""
-									}`}
-								>
-									Completed
+								<div className="mt-6 hidden grid-cols-4 text-sm font-medium text-gray-600 sm:grid">
+									<div className="text-indigo-600">Uploading file</div>
+									<div
+										className={`text-center ${
+											uploadProgress === 100 ? "text-indigo-600" : ""
+										}`}
+									>
+										Transcribing audio
+									</div>
+									<div
+										className={`text-center ${
+											transcribeProgress >= 50 ? "text-indigo-600" : ""
+										}`}
+									>
+										Saving changes
+									</div>
+									<div
+										className={`text-right ${
+											transcribeProgress === 100 ? "text-indigo-600" : ""
+										}`}
+									>
+										Completed
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				)}
+					)}
+				</div>
 				<div className="shadow sm:overflow-hidden sm:rounded-md">
 					<div className="space-y-6 bg-white px-4 py-5 sm:p-6">
 						<div>
