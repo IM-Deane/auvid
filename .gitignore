@@ -42,3 +42,7 @@ next-env.d.ts
 # python
 venv
 .venv
+
+# event-server
+event-server/.env
+event-server/node_modules/

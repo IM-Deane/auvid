@@ -10,7 +10,8 @@ def transcribe(file):
     file_extension = os.path.splitext(file)[1]
     if file_extension in ["mp3", ".wav", ".flac", ".ogg", ".m4a", ".wma"]:
         model = whisper.load_model("tiny")
-        result = model.transcribe(file)
+        result = model.transcribe(file, language="english")
+        
         return result["text"]
 
 # pass resulting text back to node.js

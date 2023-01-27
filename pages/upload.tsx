@@ -121,7 +121,7 @@ const AudioUpload = () => {
 	}, [showAlert]);
 
 	return (
-		<Layout title="Upload Audio | RustleAI">
+		<Layout title="Add new note | RustleAI">
 			<div className="my-4 h-10">
 				{showAlert && (
 					<Alert
@@ -132,6 +132,7 @@ const AudioUpload = () => {
 				)}
 			</div>
 			<h1 className="text-2xl font-semibold text-gray-900">Add New Note:</h1>
+
 			<FileUploader handleResult={handleUploadResult} />
 			{/* render section after file upload */}
 			{isEditing && (

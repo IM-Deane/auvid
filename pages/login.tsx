@@ -13,11 +13,14 @@ function login() {
 	if (session) router.replace("/"); // redirect to home if logged in
 
 	return (
-		<Auth
-			supabaseClient={supabase}
-			appearance={{ theme: ThemeSupa }}
-			theme="dark"
-		/>
+		<div>
+			<h1>hey</h1>
+			<Auth
+				supabaseClient={supabase}
+				appearance={{ theme: ThemeSupa }}
+				theme="dark"
+			/>
+		</div>
 	);
 }
 
