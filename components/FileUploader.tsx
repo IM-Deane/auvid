@@ -191,9 +191,9 @@ function FileUploader({ handleResult }) {
 				<div className="shadow sm:overflow-hidden sm:rounded-md">
 					<div className="space-y-6 bg-white px-4 py-5 sm:p-6">
 						<div>
-							<label className="block text-sm font-medium text-gray-700">
-								Upload audio file
-							</label>
+							<h2 className="block text-xl font-medium text-gray-700">
+								1. Upload audio file
+							</h2>
 							<Dropzone onDrop={handleFileDrop} multiple={false}>
 								{({ getRootProps, getInputProps }) => (
 									<div

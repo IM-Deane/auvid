@@ -126,8 +126,8 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 		<div>
 			<div className="overflow-hidden bg-white shadow sm:rounded-lg">
 				<div className="px-4 py-5 sm:px-6">
-					<h3 className="text-lg font-medium leading-6 text-gray-900">
-						Upload Overview
+					<h3 className="text-xl font-medium leading-6 text-gray-900">
+						2. Confirm Details
 					</h3>
 					<p className="mt-1 max-w-2xl text-sm text-gray-500">
 						Filename, summary, and transcription.
@@ -206,7 +206,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 								<div className="mt-4 float-right">
 									<LoadingButton
 										isLoading={isSaving}
-										text="Save to notes"
+										text="Save note"
 										loadingText="Saving..."
 										handleClick={handleSaveNotes}
 									/>
