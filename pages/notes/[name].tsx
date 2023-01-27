@@ -77,7 +77,8 @@ const NoteDetails = ({ fileData, user }: { fileData: Note; user: any }) => {
 						</div>
 						<div className="sm:col-span-2">
 							<dt className="text-sm font-medium text-gray-500">Contents</dt>
-							<dd className="mt-1 text-sm text-gray-900 px-3">
+							{/* render file contents and adhere to formatting */}
+							<dd className="mt-1 whitespace-pre-wrap text-sm text-gray-900 px-3">
 								{file.contents}
 							</dd>
 						</div>
