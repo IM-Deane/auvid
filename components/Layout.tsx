@@ -8,6 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
 	Bars3Icon,
 	DocumentDuplicateIcon,
+	BookOpenIcon,
 	HomeIcon,
 	PlusCircleIcon,
 	UserCircleIcon,
@@ -16,6 +17,12 @@ import {
 
 const navigation = [
 	{ name: "Dashboard", href: "/", icon: HomeIcon, current: true },
+	{
+		name: "About",
+		href: "/about",
+		icon: BookOpenIcon,
+		current: false,
+	},
 	{
 		name: "Add Note",
 		href: "/upload",
