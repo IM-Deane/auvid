@@ -144,7 +144,7 @@ const IndexPage = () => {
 								/>
 							</div>
 							<p className="ml-16 truncate text-sm font-medium text-gray-500">
-								Total notes created
+								Lifetime notes
 							</p>
 						</dt>
 						<dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
