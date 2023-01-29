@@ -42,7 +42,7 @@ class AnalyticsService {
 	createTranscriptionEvent = async (
 		filename: string
 	): Promise<AxiosResponse> => {
-		return await this.service.post("/transcriptions", filename);
+		return await this.service.post("/transcriptions", { filename });
 	};
 }
 
