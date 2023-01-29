@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import axios from "axios";
+import NotesService from "../utils/services/notes-service";
 
 import { File } from "../interfaces";
 
@@ -60,9 +60,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 		setLoading(true);
 
 		try {
-			const response = await axios.post("http://localhost:3000/api/summarize", {
-				transcribedText,
-			});
+			const response = await NotesService.createNoteSummary(transcribedText);
 
 			if (!response.data) throw new Error("Error summarizing text");
 
@@ -105,18 +103,13 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 			// add selected extension to filename
 			const filenameWithExt = `${filename}${filetype.ext}`;
 
-			const { data } = await axios.post(
-				"http://localhost:3000/api/notes/save",
-				{
-					filename: filenameWithExt,
-					fullText: transcribedText,
-					summary: summarizedText, // this can be empty
-					filetype: filetype.ext,
-					documentTitle,
-				}
+			const { data } = await NotesService.uploadNote(
+				filenameWithExt,
+				transcribedText,
+				summarizedText, // this can be empty
+				filetype.ext,
+				documentTitle
 			);
-
-			if (!data) throw new Error("Error saving notes");
 
 			setShowAlert(true);
 			// redirect to notes page after 3 seconds
