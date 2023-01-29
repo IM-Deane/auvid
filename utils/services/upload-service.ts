@@ -16,13 +16,17 @@ async function uploadAudioFileService(
 	formData.append("file", file);
 	formData.append("guid", guid);
 
-	return axios.post("http://localhost:5000/api/upload-audio", formData, {
-		headers: {
-			"Content-Type": "multipart/form-data",
-		},
-		responseType: "json",
-		onUploadProgress, // track upload progress for audio file (not transcription progress)
-	});
+	return axios.post(
+		`${process.env.NEXT_PUBLIC_SSE_URL}/api/upload-audio`,
+		formData,
+		{
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+			responseType: "json",
+			onUploadProgress, // track upload progress for audio file (not transcription progress)
+		}
+	);
 }
 
 export default uploadAudioFileService;
