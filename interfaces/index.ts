@@ -4,18 +4,84 @@
 //
 import { User } from "@supabase/auth-helpers-nextjs";
 
-export interface FullUser extends User {
-	profile: {
-		id: string;
-		username: string;
-		first_name: string;
-		last_name: string;
-		avatar_url: string;
-		updated_at: string | null;
-	};
+import { Json, TranscriptionType, NoteAction } from "../types/index";
+
+/**
+ * User's profile data
+ */
+export interface Profile {
+	id: User["id"];
+	username: string | null;
+	first_name: string | null;
+	last_name: string | null;
+	avatar_url: string | null;
+	updated_at: string | null;
 }
 
+/**
+ * Models base event in the database
+ */
+export interface Event {
+	id: string;
+	created_at: string;
+	description: string | null;
+	metadata: Json | null;
+	profile: Profile["id"] | Profile; // can be a Profile id or full object
+	updated_at: string | null;
+}
+
+/**
+ * Profile with event relations
+ */
+export interface ProfileWithEvents extends Profile {
+	events: Event[];
+}
+
+/**
+ * For transcription events
+ */
+export interface Transcription {
+	id: string;
+	event_id: Event["id"];
+	type: TranscriptionType;
+}
+
+/**
+ * For summary events
+ */
+export interface Summary {
+	id: string;
+	event_id: Event["id"];
+}
+
+/**
+ * For note events
+ */
 export interface Note {
+	event_id: Event["id"];
+	has_summary: boolean;
+	id: string;
+	type: NoteAction;
+}
+
+/**
+ * User data with profile
+ */
+export interface FullUser extends User {
+	profile: Profile;
+}
+
+/**
+ * User data with profile and event relations
+ */
+export interface FullUserWithEvents extends FullUser {
+	events: Event[];
+}
+
+/**
+ * Models a Supabase file
+ */
+export interface NoteFile {
 	id: string;
 	name: string;
 	last_accessed_at: string;
@@ -28,6 +94,9 @@ export interface Note {
 	contents: string | null;
 }
 
+/**
+ * Models a file on the client side
+ */
 export interface File {
 	id: number;
 	name: string;

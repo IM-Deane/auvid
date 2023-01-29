@@ -282,6 +282,7 @@ model events {
 
 model transcriptions {
   id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type     transcription_type @default(audio)
   event_id String @db.Uuid
   event    events @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
@@ -393,7 +394,7 @@ enum key_type {
   @@schema("pgsodium")
 }
 
-enum transacription_type {
+enum transcription_type {
   audio
   video
   meeting
