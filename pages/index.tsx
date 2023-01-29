@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import Link from "next/link";
+
 import Layout from "../components/Layout";
 
 import AnalyticsService from "../utils/services/analytics-service";
@@ -33,7 +35,7 @@ const IndexPage = () => {
 					notes: true,
 				});
 
-				setEventCounts(countResponse.data);
+				setEventCounts(countResponse.data.counts);
 				setEvents(res.data.events);
 				setProfile(res.data.profile);
 			} catch (error) {
@@ -53,7 +55,7 @@ const IndexPage = () => {
 			<section className="mt-8">
 				<header>
 					<h3 className="text-lg font-medium leading-6 text-gray-900">
-						Actions
+						Latest actions
 					</h3>
 				</header>
 
@@ -76,7 +78,9 @@ const IndexPage = () => {
 									</p>
 								</dt>
 								<dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-									<p className="text-2xl font-semibold text-gray-900">{key}</p>
+									<p className="text-2xl font-semibold text-gray-900">
+										{value}
+									</p>
 									<p
 										className={classNames(
 											value > 0 ? "text-green-600" : "text-red-600",
@@ -104,14 +108,14 @@ const IndexPage = () => {
 									<div className="absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6">
 										{key === "notes" && (
 											<div className="text-sm">
-												<a
-													href="#"
+												<Link
+													href="/notes"
 													className="font-medium text-indigo-600 hover:text-indigo-500"
 												>
 													{" "}
 													View all
 													<span className="sr-only"> {key} stats</span>
-												</a>
+												</Link>
 											</div>
 										)}
 									</div>
@@ -123,7 +127,9 @@ const IndexPage = () => {
 
 			<section className="mt-8">
 				<header>
-					<h3 className="text-lg font-medium leading-6 text-gray-900">Notes</h3>
+					<h3 className="text-lg font-medium leading-6 text-gray-900">
+						Note Events
+					</h3>
 				</header>
 
 				<dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

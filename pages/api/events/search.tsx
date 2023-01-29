@@ -30,35 +30,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			},
 		};
 
-		// let transcriptions: number = 0;
-		// let summaries: number = 0;
-		// let notes: number = 0;
-		Object.entries(req.query).forEach(async ([key, value]) => {
+		// map over query params and return an array of promises
+		const promises = Object.entries(req.query).map(async ([key, value]) => {
 			// convert string to boolean and assign to params
 			params[key] = !!value;
 
-			// if (key === "transcriptions" && value) {
-			// 	transcriptions = await prisma.transcriptions.count(filterByProfileId);
-			// } else if (key === "summaries" && value) {
-			// 	summaries = await prisma.summaries.count(filterByProfileId);
-			// } else if (key === "notes" && value) {
-			// 	notes = await prisma.notes.count(filterByProfileId);
-			// }
+			if (key === "transcriptions" && value) {
+				return await prisma.transcriptions.count(filterByProfileId);
+			} else if (key === "summaries" && value) {
+				return await prisma.summaries.count(filterByProfileId);
+			} else if (key === "notes" && value) {
+				return await prisma.notes.count(filterByProfileId);
+			}
 		});
 
-		const eventsWithCount = await prisma.events.findMany({
-			where: {
-				profile_id: session.user.id,
-			},
-			select: {
-				_count: {
-					select: { ...params }, // use params to specify relations
-				},
-			},
-		});
+		// destructure and assign (note: order matters!)
+		const [transcriptions, summaries, notes] = await Promise.all(promises);
 
-		res.status(200).json(eventsWithCount[0]._count);
-		// res.status(200).json({ counts: { transcriptions, summaries, notes } });
+		res.status(200).json({ counts: { transcriptions, summaries, notes } });
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ error: error.message });
