@@ -61,7 +61,7 @@ const IndexPage = () => {
 					{eventCounts &&
 						Object.entries(eventCounts).map(([key, value]) => (
 							<div
-								key={key}
+								key={key + Date.now().toLocaleString()}
 								className="relative overflow-hidden rounded-lg bg-white px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6"
 							>
 								<dt>
