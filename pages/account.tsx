@@ -266,18 +266,10 @@ const AccountPage = ({ user }: { user: FullUser }) => {
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	// Create authenticated Supabase Client
 	const supabase = createServerSupabaseClient(ctx);
-	// Check if we have a session
+	// get session
 	const {
 		data: { session },
 	} = await supabase.auth.getSession();
-
-	if (!session)
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false,
-			},
-		};
 
 	// Run queries with RLS on the server
 	const { data } = await supabase
