@@ -12,22 +12,22 @@ function login() {
 	);
 }
 
-export async function getServerSideProps(ctx) {
-	const supabase = createServerSupabaseClient(ctx);
-	const { data: session } = await supabase.auth.getSession();
+// export async function getServerSideProps(ctx) {
+// 	const supabase = createServerSupabaseClient(ctx);
+// 	const { data: session } = await supabase.auth.getSession();
 
-	if (session) {
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false,
-			},
-		};
-	}
+// 	if (session) {
+// 		return {
+// 			redirect: {
+// 				destination: "/",
+// 				permanent: false,
+// 			},
+// 		};
+// 	}
 
-	return {
-		props: {},
-	};
-}
+// 	return {
+// 		props: {},
+// 	};
+// }
 
 export default login;
