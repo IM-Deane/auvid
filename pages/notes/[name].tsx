@@ -6,10 +6,10 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import Layout from "../../components/Layout";
 
-import { Note } from "../../interfaces";
+import { NoteFile } from "../../interfaces";
 
-const NoteDetails = ({ fileData, user }: { fileData: Note; user: any }) => {
-	const [file, _] = useState<Note>(fileData);
+const NoteDetails = ({ fileData, user }: { fileData: NoteFile; user: any }) => {
+	const [file] = useState<NoteFile>(fileData);
 	const [fileToDownload, setFileToDownload] = useState<any>("");
 
 	const supabase = useSupabaseClient();
