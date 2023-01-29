@@ -2,7 +2,8 @@ import React, { useState } from "react";
 
 import Dropzone from "react-dropzone";
 
-import uploadAudioFileService from "../utils/upload-service";
+import uploadAudioFileService from "../utils/services/upload-service";
+import AnalyticsService from "../utils/services/analytics-service";
 
 import LoadingButton from "./LoadingButton";
 
@@ -91,7 +92,9 @@ function FileUploader({ handleResult }) {
 				guid,
 				uploadProgress
 			);
-			if (!response.data) throw new Error("Error uploading file");
+
+			// side effect: track transcription usage
+			await AnalyticsService.createTranscriptionEvent(response.data.filename);
 
 			handleResult(response.data);
 		} catch (error) {
