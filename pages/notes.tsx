@@ -1,25 +1,16 @@
 import { useState, useEffect } from "react";
 
-import { GetServerSidePropsContext } from "next";
-import Link from "next/link";
-
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import useProfile from "../hooks/useProfile";
 
-import prettyBytes from "pretty-bytes";
-
-import {
-	PencilSquareIcon,
-	PlusCircleIcon,
-	XCircleIcon,
-} from "@heroicons/react/20/solid";
+import NotesService from "../utils/services/notes-service";
 
 import Alert from "../components/Alert";
 import DeleteModal from "../components/DeleteModal";
 import Layout from "../components/Layout";
+import NoteGallery from "../components/Notes/NoteGallery";
 
-const NotesList = ({ fileList, user }) => {
-	const [files, setFiles] = useState<any[]>(fileList);
+const NotesList = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [showAlert, setShowAlert] = useState({
 		status: false,
@@ -31,20 +22,17 @@ const NotesList = ({ fileList, user }) => {
 	});
 
 	const supabase = useSupabaseClient();
+	const { profile } = useProfile();
 
 	const handleAlertDismiss = () => setShowAlert({ status: false, message: "" });
 
-	// delete single file
 	const handleDeleteFile = async (filename) => {
 		try {
-			const { error } = await supabase.storage
+			await supabase.storage
 				.from("notes")
-				.remove([`${user.id}/${filename}`]);
+				.remove([`${profile.id}/${filename}`]);
 
-			if (error) throw new Error(error.message);
-
-			const updatedFiles = files.filter((file) => file.name !== filename);
-			setFiles(updatedFiles);
+			refreshNotes();
 		} catch (error) {
 			console.log(error);
 			setError({
@@ -59,15 +47,11 @@ const NotesList = ({ fileList, user }) => {
 	// remove all file from user's folder
 	const handleClearAllFiles = async () => {
 		try {
-			// create list of all file paths in user's folder
-			const filesToDelete = files.map((file) => `${user.id}/${file.name}`);
+			const filesToDelete = notes.map((file) => `${profile.id}/${file.name}`);
 
-			const { error } = await supabase.storage
-				.from("notes")
-				.remove(filesToDelete);
+			await supabase.storage.from("notes").remove(filesToDelete);
 
-			if (error) throw new Error(error.message);
-			setFiles([]); // remove all files from state
+			refreshNotes();
 		} catch (error) {
 			console.log(error);
 			setError({
@@ -75,7 +59,7 @@ const NotesList = ({ fileList, user }) => {
 				message: "There was a problem clearing the files!",
 			});
 		} finally {
-			setShowModal(false); // close modal
+			setShowModal(false);
 			setShowAlert({
 				status: true,
 				message: "All files were successfully removed!",
@@ -89,6 +73,15 @@ const NotesList = ({ fileList, user }) => {
 			setTimeout(() => setShowAlert({ status: false, message: "" }), 5000);
 	}, [showAlert]);
 
+	const {
+		notes,
+		isLoading,
+		error: notesError,
+		refreshNotes,
+	} = NotesService.getCurrentNotes();
+
+	if (notesError) return <div>Error: {notesError}</div>;
+
 	return (
 		<Layout title="Notes | RustleAI">
 			<div className="my-4 h-10">
@@ -100,87 +93,12 @@ const NotesList = ({ fileList, user }) => {
 					/>
 				)}
 			</div>
-			<header className="flex justify-center items-center">
-				<h1 className="flex-auto w-64 mb-5 text-2xl font-semibold text-gray-900">
-					Notes
-				</h1>
-				{files.length > 0 && (
-					<span
-						onClick={() => setShowModal(true)}
-						className="flex-none w-32 cursor-pointer font-medium text-indigo-600 hover:text-indigo-500"
-					>
-						Clear All
-					</span>
-				)}
-			</header>
-
-			<ul
-				role="list"
-				className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-			>
-				{!files.length ? (
-					<p>
-						Nothing to see here...{" "}
-						<Link href="/upload">
-							<span className="font-medium text-indigo-600 hover:text-indigo-500">
-								Add a new note <PlusCircleIcon className="w-4 h-4 inline" />
-							</span>
-						</Link>
-					</p>
-				) : (
-					files.map((file) => (
-						<li
-							key={file.id}
-							className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow"
-						>
-							<div className="flex w-full items-center justify-between space-x-6 p-6">
-								<div className="flex-1 truncate">
-									<div className="flex items-center space-x-3">
-										<h3 className="truncate text-sm font-medium text-gray-900">
-											{file.name}
-										</h3>
-										<span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-											Size: {prettyBytes(file.metadata.size)}
-										</span>
-									</div>
-									{/* TODO: add description? */}
-									<p className="mt-1 truncate text-sm text-gray-500">
-										Created on: {new Date(file.created_at).toDateString()}
-									</p>
-								</div>
-							</div>
-							<div>
-								<div className="-mt-px flex divide-x divide-gray-200">
-									<div className="flex w-0 flex-1">
-										<button
-											onClick={() => handleDeleteFile(file.name)}
-											className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
-										>
-											<XCircleIcon
-												className="h-5 w-5 text-gray-400"
-												aria-hidden="true"
-											/>
-											<span className="ml-3">Remove</span>
-										</button>
-									</div>
-									<div className="-ml-px flex w-0 flex-1">
-										<Link
-											href={`/notes/${file.name}`}
-											className="relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
-										>
-											<PencilSquareIcon
-												className="h-5 w-5 text-gray-400"
-												aria-hidden="true"
-											/>
-											<span className="ml-3">View</span>
-										</Link>
-									</div>
-								</div>
-							</div>
-						</li>
-					))
-				)}
-			</ul>
+			<NoteGallery
+				notes={notes}
+				isLoading={isLoading}
+				setShowModal={setShowModal}
+				handleDeleteFile={handleDeleteFile}
+			/>
 			<DeleteModal
 				open={showModal}
 				setOpen={setShowModal}
@@ -188,35 +106,6 @@ const NotesList = ({ fileList, user }) => {
 			/>
 		</Layout>
 	);
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-	// Create authenticated Supabase Client
-	const supabase = createServerSupabaseClient(ctx);
-
-	const {
-		data: { session },
-	} = await supabase.auth.getSession();
-
-	const userID = session.user.id;
-	// get all files from user folder
-	const { data, error } = await supabase.storage.from("notes").list(userID, {
-		sortBy: { column: "created_at", order: "desc" },
-	});
-
-	if (error) throw new Error(error.message);
-
-	// filter out the placeholder file
-	const fileList = data.filter(
-		(file) => file.name !== ".emptyFolderPlaceholder"
-	);
-
-	return {
-		props: {
-			fileList,
-			user: session.user,
-		},
-	};
 };
 
 export default NotesList;
