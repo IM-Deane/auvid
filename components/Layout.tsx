@@ -237,7 +237,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 									<div className="flex flex-shrink-0 bg-gray-700 p-4">
 										<Link href="/account" className="group block flex-shrink-0">
 											<div className="flex items-center">
-												<div className="h-14 w-20 relative">
+												<div className="h-10 w-10 relative">
 													<Image
 														className="rounded-full"
 														src={
