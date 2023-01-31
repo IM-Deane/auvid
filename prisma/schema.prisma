@@ -405,6 +405,8 @@ enum transcription_type {
 enum note_action_type {
   uploaded
   downloaded
+  deleted
+  updated
 
   @@schema("events")
 }
