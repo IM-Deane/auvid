@@ -45,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		// destructure and assign (note: order matters!)
 		const [transcriptions, summaries, notes] = await Promise.all(promises);
 
-		res.status(200).json({ counts: { transcriptions, summaries, notes } });
+		res.status(200).json({ transcriptions, summaries, notes });
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ error: error.message });
