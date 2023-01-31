@@ -28,7 +28,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const userId = session.user.id;
 		const { filename, has_summary } = req.body;
-		console.log(has_summary);
 
 		const requestConfig = {
 			request_id: v4(), // unique id for request
