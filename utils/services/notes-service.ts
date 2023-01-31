@@ -17,7 +17,6 @@ class NotesService {
 	 * @returns {AxiosResponse} response object containing all events
 	 */
 	getCurrentNotes = async (): Promise<AxiosResponse> => {
-		// TODO: thi is slow, should probably cache the note files
 		return await this.service.get("/");
 	};
 

@@ -1,9 +1,12 @@
 import axios, { AxiosResponse } from "axios";
+import useSWR from "swr";
 
 import { EventCountSearchParams } from "../../types/index";
 
 class AnalyticsService {
 	private service: any;
+	private fetcher = async ([url, params]) =>
+		await this.service.get(url, { params });
 
 	constructor() {
 		this.service = axios.create({
@@ -12,6 +15,8 @@ class AnalyticsService {
 				Accept: "application/json",
 			},
 		});
+
+		this.fetcher = this.fetcher.bind(this);
 	}
 
 	/**
@@ -25,12 +30,19 @@ class AnalyticsService {
 	/**
 	 * Get a count for the specified event(s) related to the user
 	 * @param {object} params object containing the event types to count
-	 * @returns {AxiosResponse} response object containing all events
+	 * @returns {object} object containing all events
 	 */
-	getEventCounts = async (
-		params: EventCountSearchParams
-	): Promise<AxiosResponse> => {
-		return await this.service.get("/search", { params });
+	getEventCounts = (params: EventCountSearchParams) => {
+		const { data, isLoading, error } = useSWR(
+			["/search", params],
+			this.fetcher
+		);
+
+		return {
+			data,
+			isLoading,
+			error: error,
+		};
 	};
 
 	/**
