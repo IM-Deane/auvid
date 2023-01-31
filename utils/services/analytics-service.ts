@@ -24,6 +24,7 @@ class AnalyticsService {
 	 * @returns {AxiosResponse} response object containing all events
 	 */
 	getEvents = async (): Promise<AxiosResponse> => {
+		// TODO: this may need SWR
 		return await this.service.get("/");
 	};
 

@@ -7,14 +7,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
-		// Create authenticated Supabase Client
 		const supabase = createServerSupabaseClient({ req, res });
-		// Check for session
+
 		const {
 			data: { session },
 		} = await supabase.auth.getSession();
 
-		// get user id
 		const userId = session.user.id;
 
 		// get user's notes
