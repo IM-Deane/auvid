@@ -106,17 +106,24 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 			// add selected extension to filename
 			const filenameWithExt = `${filename}${filetype.ext}`;
 
-			const { data } = await NotesService.uploadNote(
-				filenameWithExt,
-				transcribedText,
-				summarizedText, // this can be empty
-				filetype.ext,
-				documentTitle
-			);
+			// note upload events rely on the success of the notes request so we group together
+			const hasSummary = summarizedText ? true : false;
+			const [uploadResponse] = await Promise.all([
+				NotesService.uploadNote(
+					filenameWithExt,
+					transcribedText,
+					summarizedText, // this can be empty
+					filetype.ext,
+					documentTitle
+				),
+				AnalyticsService.createNotesUploadEvent(filename, hasSummary),
+			]);
 
 			setShowAlert(true);
 			// redirect to notes page after 3 seconds
-			setTimeout(() => (router.push(`/notes/${data.filename}`), 3000));
+			setTimeout(
+				() => (router.push(`/notes/${uploadResponse.data.filename}`), 3000)
+			);
 		} catch (error) {
 			if (error.response) {
 				// response with status code other than 2xx
