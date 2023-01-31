@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { GetServerSidePropsContext } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import prettyBytes from "pretty-bytes";
 
 import Layout from "../../components/Layout";
 
@@ -57,7 +58,7 @@ const NoteDetails = ({ fileData }: { fileData: NoteFile }) => {
 							<dt className="text-sm font-medium text-gray-500">File Size</dt>
 							<dd className="mt-1 text-sm text-gray-900">
 								<span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-									{file.metadata.size} bytes
+									{prettyBytes(file.metadata.size)}
 								</span>
 							</dd>
 						</div>

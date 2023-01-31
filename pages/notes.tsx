@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 
 import { GetServerSidePropsContext } from "next";
+import Link from "next/link";
+
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
-import Link from "next/link";
+import prettyBytes from "pretty-bytes";
 
 import {
 	PencilSquareIcon,
@@ -138,7 +140,7 @@ const NotesList = ({ fileList, user }) => {
 											{file.name}
 										</h3>
 										<span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-											Size: {file.metadata.size} bytes
+											Size: {prettyBytes(file.metadata.size)}
 										</span>
 									</div>
 									{/* TODO: add description? */}
