@@ -13,15 +13,3 @@ export type Json =
 export type EventCountSearchParams = {
 	[key: string]: boolean;
 };
-
-// enums
-export enum NoteAction {
-	uploaded,
-	downloaded,
-}
-
-export enum TranscriptionType {
-	audio,
-	video,
-	meeting,
-}
