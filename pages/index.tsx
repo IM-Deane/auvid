@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import Layout from "../components/Layout";
+import IconStatsList from "../components/cards/IconStatsList";
 
 import AnalyticsService from "../utils/services/analytics-service";
 import NotesService from "../utils/services/notes-service";
@@ -15,11 +16,37 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-import { EnvelopeOpenIcon } from "@heroicons/react/24/outline";
+import {
+	CursorArrowRaysIcon,
+	DocumentTextIcon,
+	EnvelopeOpenIcon,
+} from "@heroicons/react/24/outline";
 
 type EventCounts = {
 	[key: string]: number;
 };
+
+const stats = [
+	{
+		id: 1,
+		name: "Avg. Open Rate",
+		stat: "58.16%",
+		icon: EnvelopeOpenIcon,
+	},
+	{
+		id: 2,
+		name: "Avg. Click Rate",
+		stat: "24.57%",
+		icon: CursorArrowRaysIcon,
+	},
+	{
+		id: 3,
+		name: "Total Notes",
+		stat: "71,897",
+		icon: DocumentTextIcon,
+		href: "/notes",
+	},
+];
 
 const IndexPage = () => {
 	const [profile, setProfile] = useState<Profile>(null);
@@ -36,6 +63,8 @@ const IndexPage = () => {
 					notes: true,
 				});
 				const noteResponse = await NotesService.getCurrentNotes();
+				console.log("notes data", noteResponse.data);
+				console.log("counts data", countResponse.data.counts);
 
 				setEventCounts(countResponse.data.counts);
 				setProfile(res.data.profile);
@@ -297,6 +326,9 @@ const IndexPage = () => {
 						</dd>
 					</div>
 				</dl>
+			</section>
+			<section>
+				<IconStatsList title="Notes" stats={stats} />
 			</section>
 		</Layout>
 	);
