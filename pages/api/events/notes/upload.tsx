@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		// create note upload event using prisma nested create
 		const event = await prisma.events.create({
 			data: {
-				description: `Uploaded ${filename}`, // has no extension
+				description: `Upload event for: ${filename}`, // has no extension
 				metadata: requestConfig,
 				profile: {
 					connect: { id: userId },
