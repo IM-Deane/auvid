@@ -49,7 +49,7 @@ const navigation = [
 const accountNavigation = [
 	{ name: "Your Profile", href: "/account" },
 	{ name: "Billing", href: "#" },
-	{ name: "Sign out", href: "#" }, // TODO: Add sign out functionality
+	{ name: "Sign out" },
 ];
 
 function classNames(...classes) {
@@ -61,12 +61,24 @@ type Props = {
 	title?: string;
 };
 
-const Layout = ({ children, title = "This is the default title" }: Props) => {
+const Layout = ({ children, title = "Auvid" }: Props) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [user, setUser] = useState(null);
 
 	const router = useRouter();
 	const supabase = useSupabaseClient();
+
+	/**
+	 * Sign out user and redirect to login page
+	 */
+	const handleSignOut = async () => {
+		try {
+			await supabase.auth.signOut();
+			router.replace("/auth/login");
+		} catch (error) {
+			console.log("Error signing out: ", error);
+		}
+	};
 
 	navigation.forEach((item) => {
 		if (item.href === router.pathname) {
@@ -79,11 +91,10 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 	useEffect(() => {
 		const getCurrentUser = async () => {
 			const { data } = await supabase.auth.getSession();
-
 			setUser(data.session.user);
 		};
 		getCurrentUser();
-	}, [user]);
+	}, []);
 
 	return (
 		<div>
@@ -399,15 +410,29 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 										{accountNavigation.map((item) => (
 											<Menu.Item key={item.name}>
 												{({ active }) => (
-													<a
-														href={item.href}
-														className={classNames(
-															active ? "bg-gray-100" : "",
-															"block px-4 py-2 text-sm text-gray-700"
+													<div>
+														{item.name !== "Sign out" ? (
+															<Link
+																href={item.href}
+																className={classNames(
+																	active ? "bg-gray-100" : "",
+																	"block px-4 py-2 text-sm text-gray-700"
+																)}
+															>
+																{item.name}
+															</Link>
+														) : (
+															<button
+																onClick={handleSignOut}
+																className={classNames(
+																	active ? "bg-gray-100" : "",
+																	"w-full block px-4 py-2 text-sm text-gray-700 text-left"
+																)}
+															>
+																{item.name}
+															</button>
 														)}
-													>
-														{item.name}
-													</a>
+													</div>
 												)}
 											</Menu.Item>
 										))}
