@@ -1,6 +1,33 @@
 import Link from "next/link";
 
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
+import {
+	CursorArrowRaysIcon,
+	DocumentTextIcon,
+	EnvelopeOpenIcon,
+} from "@heroicons/react/24/outline";
+
+const stats = [
+	{
+		id: 1,
+		name: "Avg. Open Rate",
+		stat: "58.16%",
+		icon: EnvelopeOpenIcon,
+	},
+	{
+		id: 2,
+		name: "Avg. Click Rate",
+		stat: "24.57%",
+		icon: CursorArrowRaysIcon,
+	},
+	{
+		id: 3,
+		name: "Total Notes",
+		stat: "71,897",
+		icon: DocumentTextIcon,
+		href: "/notes",
+	},
+];
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
