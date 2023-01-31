@@ -32,7 +32,7 @@ class NotesService {
 		filetype,
 		documentTitle
 	): Promise<AxiosResponse> => {
-		return await axios.post("/save", {
+		return await this.service.post("/save", {
 			filename: filenameWithExt,
 			fullText: transcribedText,
 			summary: summarizedText, // this can be empty
@@ -46,7 +46,7 @@ class NotesService {
 	 * @returns {AxiosResponse} response object containing all events
 	 */
 	createNoteSummary = async (transcribedText): Promise<AxiosResponse> => {
-		return await axios.post("/summarize", { transcribedText });
+		return await this.service.post("/summarize", { transcribedText });
 	};
 }
 

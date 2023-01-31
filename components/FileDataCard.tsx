@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
+import AnalyticsService from "../utils/services/analytics-service";
 import NotesService from "../utils/services/notes-service";
 
 import { File } from "../interfaces";
@@ -60,11 +61,13 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 		setLoading(true);
 
 		try {
-			const response = await NotesService.createNoteSummary(transcribedText);
+			// summary event relies on the success of the summary request so we group together
+			const [summary] = await Promise.all([
+				NotesService.createNoteSummary(transcribedText),
+				AnalyticsService.createSummariesEvent(filename),
+			]);
 
-			if (!response.data) throw new Error("Error summarizing text");
-
-			const formattedNotes = trimEdgesAndCapitalizeFirstLetter(response.data);
+			const formattedNotes = trimEdgesAndCapitalizeFirstLetter(summary.data);
 			setSummarizedText(formattedNotes);
 		} catch (error) {
 			if (error.response) {

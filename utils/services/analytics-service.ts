@@ -44,6 +44,16 @@ class AnalyticsService {
 	): Promise<AxiosResponse> => {
 		return await this.service.post("/transcriptions", { filename });
 	};
+
+	/**
+	 * Creates a new summaries event in the database and
+	 * returns the event object in the response
+	 * @param {string} filename original name of the audio/video file being transcribed
+	 * @returns {AxiosResponse} response object containing the summaries event
+	 */
+	createSummariesEvent = async (filename: string): Promise<AxiosResponse> => {
+		return await this.service.post("/summaries", { filename });
+	};
 }
 
 export default new AnalyticsService();
