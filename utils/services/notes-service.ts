@@ -1,7 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 
+import useSWR from "swr";
+
 class NotesService {
 	private service: any;
+	private fetcher = async (url) => await this.service.get(url);
 
 	constructor() {
 		this.service = axios.create({
@@ -10,14 +13,31 @@ class NotesService {
 				Accept: "application/json",
 			},
 		});
+
+		this.fetcher = this.fetcher.bind(this);
 	}
 
 	/**
-	 * Find the user's current note count
-	 * @returns {AxiosResponse} response object containing all events
+	 * Find the user's current note count.
+	 * Will cache the result using `useSWR()`.
 	 */
-	getCurrentNotes = async (): Promise<AxiosResponse> => {
-		return await this.service.get("/");
+	getCurrentNotes = () => {
+		const { data, isLoading, error, mutate } = useSWR("/", this.fetcher);
+		const notes = data?.data || [];
+
+		return {
+			notes,
+			isLoading,
+			error,
+			refreshNotes: mutate,
+		};
+	};
+
+	/**
+	 * Remove's the specified note from storage
+	 */
+	deleteNote = async (noteName: string) => {
+		return await this.service.delete(`/${noteName}`);
 	};
 
 	/**
