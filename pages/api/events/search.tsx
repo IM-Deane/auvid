@@ -3,9 +3,7 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import { EventCountSearchParams } from "../../../types";
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../../utils/prisma-client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "GET") {
