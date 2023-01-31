@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import AnalyticsService from "../../../utils/services/analytics-service";
 
-import LoadingSkeleton from "./LoadingSkeleton";
+import LoadingSkeleton from "../../cards/LoadingSkeleton";
 
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { EnvelopeOpenIcon } from "@heroicons/react/24/outline";
