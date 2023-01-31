@@ -61,7 +61,7 @@ class AnalyticsService {
 
 	/**
 	 * Creates a new notes uploaded event in the database.
-	 * @param {string} filename original name of the audio/video file being transcribed
+	 * @param {string} filename name of the audio/video file being transcribed
 	 * @param {string} hasSummary There are a few cases where summaries aren’t added to notes.
 	 * We would like to keep tabs on whether they do or don’t.
 	 * @returns {AxiosResponse} response object containing the upload event
@@ -71,6 +71,23 @@ class AnalyticsService {
 		hasSummary: boolean
 	): Promise<AxiosResponse> => {
 		return await this.service.post("/notes/upload", {
+			filename,
+			has_summary: hasSummary,
+		});
+	};
+
+	/**
+	 * Creates a new notes download event in the database.
+	 * @param {string} filename name of the audio/video file being transcribed
+	 * @param {string} hasSummary There are a few cases where summaries aren’t added to notes.
+	 * We would like to keep tabs on whether they do or don’t.
+	 * @returns {AxiosResponse} response object containing the upload event
+	 */
+	createNotesDownloadEvent = async (
+		filename: string,
+		hasSummary: boolean
+	): Promise<AxiosResponse> => {
+		return await this.service.post("/notes/download", {
 			filename,
 			has_summary: hasSummary,
 		});

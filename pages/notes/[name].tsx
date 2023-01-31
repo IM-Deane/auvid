@@ -1,42 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { GetServerSidePropsContext } from "next";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 import Layout from "../../components/Layout";
 
 import { NoteFile } from "../../interfaces";
+import AnalyticsService from "../../utils/services/analytics-service";
 
-const NoteDetails = ({ fileData, user }: { fileData: NoteFile; user: any }) => {
+const NoteDetails = ({ fileData }: { fileData: NoteFile }) => {
 	const [file] = useState<NoteFile>(fileData);
-	const [fileToDownload, setFileToDownload] = useState<any>("");
+	const [fileToDownload] = useState<any>("");
 
-	const supabase = useSupabaseClient();
-
-	useEffect(() => {
-		const downloadFileLocally = async () => {
-			try {
-				// download file from storage
-				const { data, error } = await supabase.storage
-					.from("notes")
-					.download(`${user.id}/${file.name}`);
-
-				if (error) throw new Error("Error downloading file");
-
-				// create file from Blob
-				const myFile = new File([data], file.name, {
-					type: data.type,
-				});
-
-				// save URL that can be used to download the file locally
-				setFileToDownload(URL.createObjectURL(myFile));
-			} catch (error) {
-				console.log(error);
-			}
-		};
-		downloadFileLocally();
-	}, []);
+	/**
+	 * This isn't perfect as we can't tell if the user actually downloaded the file.
+	 * So we're essentially just tracking the event of the user clicking the download button.
+	 * @param filename name of the current file
+	 * @returns
+	 */
+	const handleFileDownloadEvent = async (filename) =>
+		await AnalyticsService.createNotesDownloadEvent(
+			filename,
+			file["hasSummary"]
+		);
 
 	return (
 		<Layout title="Notes | RustleAI">
@@ -85,6 +71,7 @@ const NoteDetails = ({ fileData, user }: { fileData: NoteFile; user: any }) => {
 						<div className="sm:col-span-2">
 							<dd className="float-right mt-1 text-sm text-gray-900">
 								<a
+									onClick={() => handleFileDownloadEvent(file.name)}
 									href={fileToDownload}
 									download={file.name}
 									className="inline-flex cursor-pointer items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -137,10 +124,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	const fileData = { ...data[0] };
 	fileData["contents"] = await downloadResponse.data.text();
 
+	// The method returns true for the first instance of "Summary" found.
+	// Because we use it as a section header before any text, only the document's title
+	// throws a false positive
+	fileData["hasSummary"] = fileData["contents"].includes("Summary:");
+
 	return {
 		props: {
 			fileData,
-			user: session.user,
 		},
 	};
 };
