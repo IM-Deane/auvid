@@ -10,7 +10,7 @@ import {
 } from "@heroicons/react/20/solid";
 import LoadingSkeleton from "../cards/LoadingSkeleton";
 
-function NoteGallery({ notes, isLoading, setShowModal, handleDeleteFile }) {
+function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {
 	if (isLoading) return <LoadingSkeleton count={6} large />;
 
 	return (
@@ -100,4 +100,4 @@ function NoteGallery({ notes, isLoading, setShowModal, handleDeleteFile }) {
 	);
 }
 
-export default NoteGallery;
+export default NotesList;

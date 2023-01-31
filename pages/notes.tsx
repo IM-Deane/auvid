@@ -8,9 +8,9 @@ import NotesService from "../utils/services/notes-service";
 import Alert from "../components/Alert";
 import DeleteModal from "../components/DeleteModal";
 import Layout from "../components/Layout";
-import NoteGallery from "../components/Notes/NoteGallery";
+import NoteGallery from "../components/Notes/NotesList";
 
-const NotesList = () => {
+const NotesOverview = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [showAlert, setShowAlert] = useState({
 		status: false,
@@ -108,4 +108,4 @@ const NotesList = () => {
 	);
 };
 
-export default NotesList;
+export default NotesOverview;
