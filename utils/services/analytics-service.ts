@@ -54,6 +54,23 @@ class AnalyticsService {
 	createSummariesEvent = async (filename: string): Promise<AxiosResponse> => {
 		return await this.service.post("/summaries", { filename });
 	};
+
+	/**
+	 * Creates a new notes uploaded event in the database.
+	 * @param {string} filename original name of the audio/video file being transcribed
+	 * @param {string} hasSummary There are a few cases where summaries aren’t added to notes.
+	 * We would like to keep tabs on whether they do or don’t.
+	 * @returns {AxiosResponse} response object containing the upload event
+	 */
+	createNotesUploadEvent = async (
+		filename: string,
+		hasSummary: boolean
+	): Promise<AxiosResponse> => {
+		return await this.service.post("/notes/upload", {
+			filename,
+			has_summary: hasSummary,
+		});
+	};
 }
 
 export default new AnalyticsService();
