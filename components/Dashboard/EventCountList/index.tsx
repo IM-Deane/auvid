@@ -1,7 +1,9 @@
 import React from "react";
 import Link from "next/link";
 
-import AnalyticsService from "../../utils/services/analytics-service";
+import AnalyticsService from "../../../utils/services/analytics-service";
+
+import LoadingSkeleton from "./LoadingSkeleton";
 
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { EnvelopeOpenIcon } from "@heroicons/react/24/outline";
@@ -17,7 +19,7 @@ function EventCountList() {
 		notes: true,
 	});
 
-	if (isLoading) return <p>Loading...</p>;
+	if (isLoading) return <LoadingSkeleton count={3} />;
 	if (error) return <p>Error!</p>;
 
 	const eventCounts = data.data;

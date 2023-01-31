@@ -12,7 +12,6 @@ const IndexPage = () => {
 						Latest actions
 					</h3>
 				</header>
-
 				<EventCountList />
 			</section>
 		</Layout>
