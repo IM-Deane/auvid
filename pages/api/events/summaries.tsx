@@ -36,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			data: req.body,
 		};
 
-		// create transcription event using prisma nested create
+		// create summaries event using prisma nested create
 		const event = await prisma.events.create({
 			data: {
 				description: `Summarized text for ${filename}`, // has no extension
