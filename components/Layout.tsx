@@ -3,39 +3,44 @@ import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Disclosure, Transition } from "@headlessui/react";
 
 import {
 	Bars3Icon,
 	DocumentDuplicateIcon,
 	BookOpenIcon,
 	HomeIcon,
-	PlusCircleIcon,
 	UserCircleIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-	{ name: "Dashboard", href: "/", icon: HomeIcon, current: true },
+	{ name: "Dashboard", icon: HomeIcon, current: true, href: "/" },
 	{
 		name: "About",
-		href: "/about",
 		icon: BookOpenIcon,
 		current: false,
-	},
-	{
-		name: "Add Note",
-		href: "/upload",
-		icon: PlusCircleIcon,
-		current: false,
+		href: "/about",
 	},
 	{
 		name: "Notes",
-		href: "/notes",
 		icon: DocumentDuplicateIcon,
 		current: false,
+		children: [
+			{ name: "Overview", href: "/notes" },
+			{ name: "Add Note", href: "/upload" },
+		],
 	},
-	{ name: "Account", href: "/account", icon: UserCircleIcon, current: false },
+	{
+		name: "Account",
+		icon: UserCircleIcon,
+		current: false,
+		children: [
+			{ name: "Overview", href: "/account" },
+			{ name: "Billing", href: "#" },
+			{ name: "Settings", href: "#" },
+		],
+	},
 ];
 
 function classNames(...classes) {
@@ -129,29 +134,84 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 											/>
 										</div>
 										<nav className="mt-5 space-y-1 px-2">
-											{navigation.map((item) => (
-												<a
-													key={item.name}
-													href={item.href}
-													className={classNames(
-														item.current
-															? "bg-gray-900 text-white"
-															: "text-gray-300 hover:bg-gray-700 hover:text-white",
-														"group flex items-center px-2 py-2 text-base font-medium rounded-md"
-													)}
-												>
-													<item.icon
-														className={classNames(
-															item.current
-																? "text-gray-300"
-																: "text-gray-400 group-hover:text-gray-300",
-															"mr-4 flex-shrink-0 h-6 w-6"
+											{navigation.map((item) =>
+												!item.children ? (
+													<div key={item.name}>
+														<Link
+															href={item.href}
+															className={classNames(
+																item.current
+																	? "bg-gray-900 text-white"
+																	: "text-gray-300 hover:bg-gray-700 hover:text-white",
+																"group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+															)}
+														>
+															<item.icon
+																className={classNames(
+																	item.current
+																		? "text-gray-300"
+																		: "text-gray-400 group-hover:text-gray-300",
+																	"mr-3 flex-shrink-0 h-6 w-6"
+																)}
+																aria-hidden="true"
+															/>
+															{item.name}
+														</Link>
+													</div>
+												) : (
+													<Disclosure
+														as="div"
+														key={item.name}
+														className="space-y-1"
+													>
+														{({ open }) => (
+															<>
+																<Disclosure.Button
+																	className={classNames(
+																		item.current
+																			? "bg-gray-900 text-white"
+																			: "text-gray-300 hover:bg-gray-700 hover:text-white",
+																		"group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+																	)}
+																>
+																	<item.icon
+																		className="mr-3 h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+																		aria-hidden="true"
+																	/>
+																	<span className="flex-1">{item.name}</span>
+																	<svg
+																		className={classNames(
+																			open
+																				? "text-gray-400 rotate-90"
+																				: "text-gray-300",
+																			"ml-3 h-5 w-5 flex-shrink-0 transform transition-colors duration-150 ease-in-out group-hover:text-gray-400"
+																		)}
+																		viewBox="0 0 20 20"
+																		aria-hidden="true"
+																	>
+																		<path
+																			d="M6 6L14 10L6 14V6Z"
+																			fill="currentColor"
+																		/>
+																	</svg>
+																</Disclosure.Button>
+																<Disclosure.Panel className="space-y-1">
+																	{item.children.map((subItem) => (
+																		<Disclosure.Button
+																			key={subItem.name}
+																			as="a"
+																			href={subItem.href}
+																			className="group bg-gray-700 flex w-full items-center rounded-md py-2 pl-11 pr-2 text-sm font-medium text-gray-300 hover:bg-gray-500 hover:text-white"
+																		>
+																			{subItem.name}
+																		</Disclosure.Button>
+																	))}
+																</Disclosure.Panel>
+															</>
 														)}
-														aria-hidden="true"
-													/>
-													{item.name}
-												</a>
-											))}
+													</Disclosure>
+												)
+											)}
 										</nav>
 									</div>
 									<div className="flex flex-shrink-0 bg-gray-700 p-4">
@@ -197,29 +257,80 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 								/>
 							</div>
 							<nav className="mt-5 flex-1 space-y-1 px-2">
-								{navigation.map((item) => (
-									<Link
-										key={item.name}
-										href={item.href}
-										className={classNames(
-											item.current
-												? "bg-gray-900 text-white"
-												: "text-gray-300 hover:bg-gray-700 hover:text-white",
-											"group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-										)}
-									>
-										<item.icon
-											className={classNames(
-												item.current
-													? "text-gray-300"
-													: "text-gray-400 group-hover:text-gray-300",
-												"mr-3 flex-shrink-0 h-6 w-6"
+								{navigation.map((item) =>
+									!item.children ? (
+										<div key={item.name}>
+											<Link
+												href={item.href}
+												className={classNames(
+													item.current
+														? "bg-gray-900 text-white"
+														: "text-gray-300 hover:bg-gray-700 hover:text-white",
+													"group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+												)}
+											>
+												<item.icon
+													className={classNames(
+														item.current
+															? "text-gray-300"
+															: "text-gray-400 group-hover:text-gray-300",
+														"mr-3 flex-shrink-0 h-6 w-6"
+													)}
+													aria-hidden="true"
+												/>
+												{item.name}
+											</Link>
+										</div>
+									) : (
+										<Disclosure as="div" key={item.name} className="space-y-1">
+											{({ open }) => (
+												<>
+													<Disclosure.Button
+														className={classNames(
+															item.current
+																? "bg-gray-900 text-white"
+																: "text-gray-300 hover:bg-gray-700 hover:text-white",
+															"group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+														)}
+													>
+														<item.icon
+															className="mr-3 h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+															aria-hidden="true"
+														/>
+														<span className="flex-1">{item.name}</span>
+														<svg
+															className={classNames(
+																open
+																	? "text-gray-400 rotate-90"
+																	: "text-gray-300",
+																"ml-3 h-5 w-5 flex-shrink-0 transform transition-colors duration-150 ease-in-out group-hover:text-gray-400"
+															)}
+															viewBox="0 0 20 20"
+															aria-hidden="true"
+														>
+															<path
+																d="M6 6L14 10L6 14V6Z"
+																fill="currentColor"
+															/>
+														</svg>
+													</Disclosure.Button>
+													<Disclosure.Panel className="space-y-1">
+														{item.children.map((subItem) => (
+															<Disclosure.Button
+																key={subItem.name}
+																as="a"
+																href={subItem.href}
+																className="group bg-gray-700 flex w-full items-center rounded-md py-2 pl-11 pr-2 text-sm font-medium text-gray-300 hover:bg-gray-500 hover:text-white"
+															>
+																{subItem.name}
+															</Disclosure.Button>
+														))}
+													</Disclosure.Panel>
+												</>
 											)}
-											aria-hidden="true"
-										/>
-										{item.name}
-									</Link>
-								))}
+										</Disclosure>
+									)
+								)}
 							</nav>
 						</div>
 						<div className="flex flex-shrink-0 bg-gray-700 p-4">
