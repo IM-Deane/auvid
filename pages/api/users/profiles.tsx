@@ -16,7 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const { data } = await supabase
 			.from("profiles")
-			.select(`username, avatar_url, first_name, last_name`)
+			.select(`id, username, avatar_url, first_name, last_name`)
 			.eq("id", userId)
 			.single();
 
