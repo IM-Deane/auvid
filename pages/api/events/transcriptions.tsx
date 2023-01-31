@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { v4 } from "uuid";
 
 import prisma from "../../../utils/prisma-client";
+import { TranscriptionType } from "../../../utils/enums";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") {
@@ -26,7 +27,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 
 		const userId = session.user.id;
-		const { filename } = req.body;
+		const { filename, type } = req.body;
+
+		if (!filename || !type)
+			return res.status(400).json({
+				error: "missing_data",
+				message: "Missing filename or type",
+			});
+		// check if type is is present in enum
+		else if (!(type in TranscriptionType)) {
+			return res.status(400).json({
+				error: "invalid_data",
+				message: "Invalid transcription type",
+			});
+		}
 
 		const requestConfig = {
 			request_id: v4(), // unique id for request
@@ -45,7 +59,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					connect: { id: userId },
 				},
 				transcriptions: {
-					create: {}, // will reference uuid created by DB
+					create: {
+						type: type,
+					}, // will reference uuid created by DB
 				},
 			},
 			select: {

@@ -34,15 +34,19 @@ class AnalyticsService {
 	};
 
 	/**
-	 * Creates a new transcription event in the database and
-	 * returns the event object in the response
+	 * Creates a new transcription event in the database.
 	 * @param {string} filename original name of the audio/video file being transcribed
+	 * @param {string} transcriptionType type of transcription (audio, video, or meeting)
 	 * @returns {AxiosResponse} response object containing the transcription event
 	 */
 	createTranscriptionEvent = async (
-		filename: string
+		filename: string,
+		transcriptionType: string
 	): Promise<AxiosResponse> => {
-		return await this.service.post("/transcriptions", { filename });
+		return await this.service.post("/transcriptions", {
+			filename: filename,
+			type: transcriptionType,
+		});
 	};
 
 	/**

@@ -7,6 +7,8 @@ import AnalyticsService from "../utils/services/analytics-service";
 
 import LoadingButton from "./LoadingButton";
 
+import { TranscriptionType } from "../utils/enums";
+
 function FileUploader({ handleResult }) {
 	const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
 	const [loading, setLoading] = useState(false);
@@ -94,7 +96,10 @@ function FileUploader({ handleResult }) {
 			);
 
 			// side effect: track transcription usage
-			await AnalyticsService.createTranscriptionEvent(response.data.filename);
+			await AnalyticsService.createTranscriptionEvent(
+				response.data.filename,
+				TranscriptionType.audio
+			);
 
 			handleResult(response.data);
 		} catch (error) {
