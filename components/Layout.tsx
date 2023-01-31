@@ -4,7 +4,7 @@ import Image from "next/image";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { Dialog, Disclosure, Transition } from "@headlessui/react";
+import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import {
@@ -40,11 +40,16 @@ const navigation = [
 		icon: UserCircleIcon,
 		current: false,
 		children: [
-			{ name: "Overview", href: "/account" },
+			{ name: "Your Profile", href: "/account" },
 			{ name: "Billing", href: "#" },
-			{ name: "Settings", href: "#" },
 		],
 	},
+];
+
+const accountNavigation = [
+	{ name: "Your Profile", href: "/account" },
+	{ name: "Billing", href: "#" },
+	{ name: "Sign out", href: "#" }, // TODO: Add sign out functionality
 ];
 
 function classNames(...classes) {
@@ -354,33 +359,61 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 							</nav>
 						</div>
 						<div className="flex flex-shrink-0 bg-gray-700 p-4">
-							<Link
-								href="/account"
-								className="group block w-full flex-shrink-0"
-							>
-								<div className="flex items-center">
-									<div className="h-14 w-24 relative">
-										<Image
-											className="rounded-full"
-											src={
-												user && user.avatar_url
-													? user.avatar_url
-													: ZoroProfileImg
-											}
-											fill
-											alt="User avatar"
-										/>
+							{/* Profile dropdown */}
+							<Menu as="div">
+								<Menu.Button className="group block w-full flex-shrink-0 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+									<span className="sr-only">Open user menu</span>
+									<div className="flex items-center">
+										<div className="h-10 w-10 relative overflow-hidden rounded-full">
+											<Image
+												className="rounded-full object-cover"
+												src={
+													user && user.avatar_url
+														? user.avatar_url
+														: ZoroProfileImg
+												}
+												fill
+												alt="User avatar"
+											/>
+										</div>
+										<div className="ml-3">
+											<p className="text-xs truncate font-medium text-white">
+												{user ? user.email : "Test User"}
+											</p>
+											<p className="text-xs mt-1 font-medium text-gray-400 group-hover:text-gray-200">
+												View profile
+											</p>
+										</div>
 									</div>
-									<div className="ml-3">
-										<p className="text-sm truncate font-medium text-white">
-											{user ? user.email : "Test User"}
-										</p>
-										<p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
-											View profile
-										</p>
-									</div>
-								</div>
-							</Link>
+								</Menu.Button>
+								<Transition
+									as={Fragment}
+									enter="transition ease-out duration-100"
+									enterFrom="transform opacity-0 scale-95"
+									enterTo="transform opacity-100 scale-100"
+									leave="transition ease-in duration-75"
+									leaveFrom="transform opacity-100 scale-100"
+									leaveTo="transform opacity-0 scale-95"
+								>
+									<Menu.Items className="absolute bottom-10 left-14 z-10 mt-2 w-48 origin-bottom-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+										{accountNavigation.map((item) => (
+											<Menu.Item key={item.name}>
+												{({ active }) => (
+													<a
+														href={item.href}
+														className={classNames(
+															active ? "bg-gray-100" : "",
+															"block px-4 py-2 text-sm text-gray-700"
+														)}
+													>
+														{item.name}
+													</a>
+												)}
+											</Menu.Item>
+										))}
+									</Menu.Items>
+								</Transition>
+							</Menu>
 						</div>
 					</div>
 				</div>
