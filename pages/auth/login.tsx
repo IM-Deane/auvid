@@ -1,33 +1,23 @@
-import React from "react";
+import { useRouter } from "next/router";
 
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import LoginForm from "../../components/LoginForm";
 
 function login() {
+	const supabase = useSupabaseClient();
+	const router = useRouter();
+	supabase.auth.getSession().then(({ data }) => {
+		if (data.session) {
+			router.push("/");
+		}
+	});
+
 	return (
 		<div>
 			<LoginForm />
 		</div>
 	);
 }
-
-// export async function getServerSideProps(ctx) {
-// 	const supabase = createServerSupabaseClient(ctx);
-// 	const { data: session } = await supabase.auth.getSession();
-
-// 	if (session) {
-// 		return {
-// 			redirect: {
-// 				destination: "/",
-// 				permanent: false,
-// 			},
-// 		};
-// 	}
-
-// 	return {
-// 		props: {},
-// 	};
-// }
 
 export default login;
