@@ -1,9 +1,11 @@
-import React, { ReactNode, useState, Fragment } from "react";
+import React, { ReactNode, useState, useEffect, Fragment } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import {
 	Bars3Icon,
@@ -13,6 +15,8 @@ import {
 	UserCircleIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
+
+import ZoroProfileImg from "../public/images/zoro-profile.jpg";
 
 const navigation = [
 	{ name: "Dashboard", icon: HomeIcon, current: true, href: "/" },
@@ -54,8 +58,10 @@ type Props = {
 
 const Layout = ({ children, title = "This is the default title" }: Props) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const [user, setUser] = useState(null);
 
 	const router = useRouter();
+	const supabase = useSupabaseClient();
 
 	navigation.forEach((item) => {
 		if (item.href === router.pathname) {
@@ -64,6 +70,15 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 			item.current = false;
 		}
 	});
+
+	useEffect(() => {
+		const getCurrentUser = async () => {
+			const { data } = await supabase.auth.getSession();
+
+			setUser(data.session.user);
+		};
+		getCurrentUser();
+	}, [user]);
 
 	return (
 		<div>
@@ -130,7 +145,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 											<img
 												className="h-8 w-auto"
 												src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-												alt="RustleAI"
+												alt="Auvid logo"
 											/>
 										</div>
 										<nav className="mt-5 space-y-1 px-2">
@@ -215,25 +230,30 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 										</nav>
 									</div>
 									<div className="flex flex-shrink-0 bg-gray-700 p-4">
-										<a href="#" className="group block flex-shrink-0">
+										<Link href="/account" className="group block flex-shrink-0">
 											<div className="flex items-center">
-												<div>
-													<img
-														className="inline-block h-10 w-10 rounded-full"
-														src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-														alt=""
+												<div className="h-14 w-20 relative">
+													<Image
+														className="rounded-full"
+														src={
+															user && user.avatar_url
+																? user.avatar_url
+																: ZoroProfileImg
+														}
+														fill
+														alt="User avatar"
 													/>
 												</div>
 												<div className="ml-3">
-													<p className="text-base font-medium text-white">
-														Test User
+													<p className="text-base truncate font-medium text-white">
+														{user ? user.email : "Test User"}
 													</p>
 													<p className="text-sm font-medium text-gray-400 group-hover:text-gray-300">
 														View profile
 													</p>
 												</div>
 											</div>
-										</a>
+										</Link>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
@@ -339,15 +359,22 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
 								className="group block w-full flex-shrink-0"
 							>
 								<div className="flex items-center">
-									<div>
-										<img
-											className="inline-block h-9 w-9 rounded-full"
-											src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-											alt=""
+									<div className="h-14 w-24 relative">
+										<Image
+											className="rounded-full"
+											src={
+												user && user.avatar_url
+													? user.avatar_url
+													: ZoroProfileImg
+											}
+											fill
+											alt="User avatar"
 										/>
 									</div>
 									<div className="ml-3">
-										<p className="text-sm font-medium text-white">Test User</p>
+										<p className="text-sm truncate font-medium text-white">
+											{user ? user.email : "Test User"}
+										</p>
 										<p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
 											View profile
 										</p>
