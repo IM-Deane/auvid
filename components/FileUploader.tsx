@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import Dropzone from "react-dropzone";
 
-import uploadAudioFileService from "../utils/services/upload-service";
+import UploadService from "../utils/services/upload-service";
 import AnalyticsService from "../utils/services/analytics-service";
 
 import LoadingButton from "./LoadingButton";
@@ -89,7 +89,7 @@ function FileUploader({ handleResult }) {
 		setLoading(true);
 
 		try {
-			const response = await uploadAudioFileService(
+			const response = await UploadService.newAudioFile(
 				fileData,
 				guid,
 				uploadProgress
