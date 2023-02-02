@@ -21,5 +21,7 @@ app.use("/api", apiRoutes);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-	console.log(`Upload Events service listening at http://localhost:${PORT}`);
+	console.log(
+		`Upload Events service listening at ${process.env.SERVER_URL}${PORT}`
+	);
 });

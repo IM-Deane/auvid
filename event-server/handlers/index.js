@@ -1,9 +1,11 @@
 const events = require("./events");
 const status = require("./status");
-const uploads = require("./upload");
+const audioUpload = require("./audioUpload");
+const videoUpload = require("./videoUpload");
 
 module.exports = {
 	events,
 	status,
-	uploads,
+	audioUpload,
+	videoUpload,
 };
