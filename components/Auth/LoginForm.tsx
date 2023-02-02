@@ -1,9 +1,10 @@
 import { useState } from "react";
 
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-import LoadingButton from "./LoadingButton";
+import LoadingButton from "../LoadingButton";
 
 interface FormData {
 	email: string;
@@ -124,12 +125,12 @@ function LoginForm() {
 				</h2>
 				<p className="mt-2 text-center text-sm text-gray-600">
 					Or{" "}
-					<a
-						href="#" // TODO: add link to signup page
+					<Link
+						href="/auth/signup"
 						className="font-medium text-indigo-600 hover:text-indigo-500"
 					>
 						sign up for a plan today
-					</a>
+					</Link>
 				</p>
 			</div>
 
@@ -150,7 +151,7 @@ function LoginForm() {
 									type="email"
 									value={formData.email}
 									autoComplete="email"
-									placeholder="tony@starkindustries.com"
+									placeholder="tony@starkindustries.mu"
 									required
 									onChange={handleInputChange}
 									className={getInputClasses("email")} // render different class based on error

@@ -2,9 +2,9 @@ import { useRouter } from "next/router";
 
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-import LoginForm from "../../components/Auth/LoginForm";
+import SignUpForm from "../../components/Auth/SignupForm";
 
-function login() {
+function Signup() {
 	const supabase = useSupabaseClient();
 	const router = useRouter();
 	supabase.auth.getSession().then(({ data }) => {
@@ -15,9 +15,9 @@ function login() {
 
 	return (
 		<div>
-			<LoginForm />
+			<SignUpForm />
 		</div>
 	);
 }
 
-export default login;
+export default Signup;
