@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 
 		const userId = session.user.id;
-		const { filename, type } = req.body;
+		const { filename, type, metadata } = req.body;
 
 		if (!filename || !type)
 			return res.status(400).json({
@@ -47,7 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			headers: req.headers,
 			url: req.url,
 			method: req.method,
-			data: req.body,
+			data: metadata ? metadata : req.body,
 		};
 
 		// create transcription event using prisma nested create
