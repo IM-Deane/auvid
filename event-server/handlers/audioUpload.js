@@ -47,7 +47,7 @@ function uploadAndTranscribeAudio(req, res) {
 			mv(oldPath, newPath, (err) => err && console.log(err));
 
 			// use python to transcribe file's audio to text
-			const python = spawn("python", ["python/main.py", newPath]);
+			const python = spawn("python", ["python/transcribe.py", newPath]);
 
 			let transcribedText = "";
 			python.stdout
