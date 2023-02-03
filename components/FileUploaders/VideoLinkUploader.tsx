@@ -110,15 +110,16 @@ function VideoLinkUploader({ handleResult }) {
 				guid,
 				uploadProgress
 			);
-			console.log("video response", response);
 
 			// side effect: track transcription usage
 			await AnalyticsService.createTranscriptionEvent(
 				response.data.filename,
 				TranscriptionType.video
 			);
-
 			setCompletionTime(response.data.completionTimeInSeconds);
+			setVideoURLInput("");
+
+			response.data["uploadType"] = "video";
 
 			handleResult(response.data);
 		} catch (error) {
@@ -199,7 +200,7 @@ function VideoLinkUploader({ handleResult }) {
 											transcribeProgress >= 50 ? "text-indigo-600" : ""
 										}`}
 									>
-										Saving changes
+										Transcribing to text
 									</div>
 									<div
 										className={`text-right ${
@@ -239,10 +240,10 @@ function VideoLinkUploader({ handleResult }) {
 							</div>
 							{completionTime ? (
 								<p
-									className="mt-2 text-sm text-gray-500"
+									className="mt-2 text-sm text-indigo-500"
 									id="video-completion-time"
 								>
-									{completionTime}
+									Completed transcription in {completionTime}s.
 								</p>
 							) : (
 								<p

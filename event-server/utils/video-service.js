@@ -31,7 +31,7 @@ class VideoService {
 			noWarnings: true,
 			preferFreeFormats: true,
 			noWriteComments: true,
-			writeSubs: true, // Write subtitle file (let's see if this works)
+			writeSubs: false, // Write subtitle file (let's see if this works)
 			addHeader: ["referer:youtube.com", "user-agent:googlebot"],
 		});
 	};
@@ -49,15 +49,10 @@ class VideoService {
 			noCheckCertificates: true,
 			noWarnings: true,
 			preferFreeFormats: true,
+			// writeThumbnail: true,
 			extractAudio: true,
 			format: "m4a/bestaudio/best",
 			audioQuality: 6, // 0 = best, 10 = worst
-			// postProcessors: [
-			// 	{
-			// 		key: "FFmpegExtractAudio",
-			// 		preferredcodec: "m4a",
-			// 	},
-			// ],
 			addHeader: ["referer:youtube.com", "user-agent:googlebot"],
 		});
 	};

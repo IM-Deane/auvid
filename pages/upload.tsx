@@ -6,6 +6,7 @@ import FileUploader from "../components/FileUploader";
 import FileUploadTabs from "../components/FileUploaders/FileUploadTabs";
 import Layout from "../components/Layout";
 import VideoLinkUploader from "../components/FileUploaders/VideoLinkUploader";
+import VideoUploadCard from "../components/VideoUploadCard";
 
 import { SpeakerWaveIcon, VideoCameraIcon } from "@heroicons/react/20/solid";
 
@@ -14,7 +15,9 @@ const AudioUpload = () => {
 	const [transcribedText, setTranscribedText] = useState("");
 	const [uploadedFile, setUploadedFile] = useState("");
 	const [isEditing, setIsEditing] = useState(false); // used to render text form
-	const [currentTab, setCurrentTab] = useState(0); // used to render text form
+	const [uploadData, setUploadData] = useState({
+		uploadType: "",
+	});
 	const [tabs, setTabs] = useState([
 		{ id: 0, name: "Video", icon: VideoCameraIcon, current: true },
 		{ id: 1, name: "Audio", icon: SpeakerWaveIcon, current: false },
@@ -23,11 +26,6 @@ const AudioUpload = () => {
 		status: false,
 		message: "",
 	});
-
-	// const tabs = [
-	// 	{ id: 0, name: "Video", icon: VideoCameraIcon, current: true },
-	// 	{ id: 1, name: "Audio", icon: SpeakerWaveIcon, current: false },
-	// ];
 
 	const handleTabChange = (tabId) => {
 		const newTabs = tabs.map((t) => {
@@ -48,6 +46,7 @@ const AudioUpload = () => {
 			setError({ status: false, message: "" }); // reset error status
 		}
 
+		setUploadData(data);
 		setTranscribedText(data.transcribedText);
 		setUploadedFile(data.filename);
 		setShowAlert(true);
@@ -86,15 +85,31 @@ const AudioUpload = () => {
 			</div>
 			{/* render section after file upload */}
 			{isEditing && (
-				<div className="mt-4 mb-7 py-5 px-8">
-					<FileDataCard
-						fileData={{
-							filename: uploadedFile,
-							transcribedText,
-						}}
-						setShowAlert={setShowAlert}
-						setError={setError}
-					/>
+				<div>
+					{uploadData.uploadType === "audio" ? (
+						<div className="mt-4 mb-7 py-5 px-8">
+							<FileDataCard
+								fileData={{
+									filename: uploadedFile,
+									transcribedText,
+								}}
+								setShowAlert={setShowAlert}
+								setError={setError}
+							/>
+						</div>
+					) : (
+						<div className="mt-4 mb-7 py-5 px-8">
+							<VideoUploadCard
+								fileData={{
+									filename: uploadedFile,
+									transcribedText,
+									meta: uploadData,
+								}}
+								setShowAlert={setShowAlert}
+								setError={setError}
+							/>
+						</div>
+					)}
 				</div>
 			)}
 		</Layout>

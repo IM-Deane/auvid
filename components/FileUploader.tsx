@@ -101,6 +101,8 @@ function FileUploader({ handleResult }) {
 				TranscriptionType.audio
 			);
 
+			response.data["uploadType"] = "audio";
+
 			handleResult(response.data);
 		} catch (error) {
 			if (error.response) {
