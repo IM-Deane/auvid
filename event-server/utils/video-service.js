@@ -49,7 +49,6 @@ class VideoService {
 			noCheckCertificates: true,
 			noWarnings: true,
 			preferFreeFormats: true,
-			// writeThumbnail: true,
 			extractAudio: true,
 			format: "m4a/bestaudio/best",
 			audioQuality: 6, // 0 = best, 10 = worst

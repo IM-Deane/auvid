@@ -4,6 +4,9 @@ const { spawn } = require("child_process");
 
 const EventEmitterManagerService = require("../utils/event-service");
 const VideoService = require("../utils/video-service");
+const { formatCompletionTime } = require("../utils/index");
+
+const PROGRESS_INTERVALS = new Set([25, 50, 75, 100]);
 
 /**
  * Handles file upload and video transcription
@@ -29,6 +32,7 @@ async function uploadAndTranscribeVideo(req, res) {
 		const audioFileObject = output.requested_downloads[0];
 		const filename = audioFileObject._filename;
 		const videoThumbnail = output.thumbnail;
+		const audioFileSize = audioFileObject.filesize;
 
 		audioFileObject.video = {
 			id: output.id,
@@ -37,77 +41,105 @@ async function uploadAndTranscribeVideo(req, res) {
 		};
 
 		let tempInputFilePath = "";
-		let transcriptionProgress = 0;
 		let transcribedText = "";
-		let totalTimeInSeconds = 0;
+		let completionTime = 0;
+		let downloadProgress = 1;
 		https.get(audioFileObject.url, (downloadResponse) => {
 			tempInputFilePath = `./temp/${filename}`;
-			const audioFileSize = audioFileObject.filesize;
 
-			const writeStream = fs.createWriteStream(tempInputFilePath);
-
+			const writer = fs.createWriteStream(tempInputFilePath);
 			let totalDownloadTime = 0;
 			const downloadStartTime = Date.now();
-			downloadResponse.pipe(writeStream).on("finish", () => {
-				const downloadEndTime = Date.now();
-				totalDownloadTime = downloadEndTime - downloadStartTime;
-				console.log(
-					`Finished downloading audio file in ${totalDownloadTime}ms`
-				);
+			console.log("Starting download...");
+			downloadResponse.pipe(writer);
 
-				const transcriptionStartTime = Date.now();
-				let transcriptionEndTime = null;
-				// transcription pipeline
-				const python = spawn("python", ["python/main.py", tempInputFilePath]);
-				python.stdout
-					.on("data", (chunk) => {
-						// send progress event to client
-						sseEmitter.write(`event: ${guid}\n`);
-						sseEmitter.write(`data: ${JSON.stringify({ progress: 75 })}`);
-						sseEmitter.write("\n\n");
-						sseEmitter.flush(); // end of update
+			downloadResponse
+				.on("data", (chunk) => {
+					downloadProgress += chunk.length;
+					const progress = (downloadProgress / audioFileSize) * 100;
 
-						transcribedText += chunk; // add to buffer
-					})
-					.on("end", () => {
-						// send final progress update to client
-						sseEmitter.write(`event: ${guid}\n`);
-						sseEmitter.write(`data: ${JSON.stringify({ progress: 100 })}`);
-						sseEmitter.write("\n\n");
-						sseEmitter.flush();
+					sseEmitter.write(`event: ${guid}\n`);
+					sseEmitter.write(
+						`data: ${JSON.stringify({
+							progress: progress,
+						})}`
+					);
+					sseEmitter.write("\n\n");
+					sseEmitter.flush();
+					if (PROGRESS_INTERVALS.has(Math.floor(progress))) {
+						console.log("Audio download progress: ", Math.round(progress));
+					}
+				})
+				.on("end", () => {
+					const downloadEndTime = Date.now();
+					totalDownloadTime = downloadEndTime - downloadStartTime;
+					console.log(
+						`Finished downloading audio file in ${totalDownloadTime}ms`
+					);
 
-						transcriptionEndTime = Date.now();
-					})
-					.on("close", () => {
-						const filenameNoExt = filename.substring(
-							0,
-							filename.lastIndexOf(".")
-						);
+					const python = spawn("python", [
+						"python/transcribe.py",
+						tempInputFilePath,
+					]);
 
-						const totalTranscriptionTime =
-							transcriptionEndTime - transcriptionStartTime;
-						const millisecondTotal = totalDownloadTime + totalTranscriptionTime;
-						totalTimeInSeconds = ((millisecondTotal % 60000) / 1000).toFixed(2);
+					console.log("Starting transcription...");
 
-						res.status(200).json({
-							result: "Video successfully transcribed!",
-							filename: filenameNoExt,
-							transcribedText: transcribedText.toString(),
-							videoMetadata: audioFileObject,
-							completionTimeInSeconds: totalTimeInSeconds,
-							videoThumbnail,
+					// transcription pipeline
+					const transcriptionStartTime = Date.now();
+					python.stdout
+						.on("data", (chunk) => {
+							sseEmitter.write(`event: ${guid}\n`);
+							sseEmitter.write(`data: ${JSON.stringify({ progress: 75 })}`);
+							sseEmitter.write("\n\n");
+							sseEmitter.flush();
+							console.log("Text", chunk.toString());
+
+							transcribedText += chunk; // add to buffer
+						})
+						.on("end", () => {
+							// send final progress update to client
+							sseEmitter.write(`event: ${guid}\n`);
+							sseEmitter.write(`data: ${JSON.stringify({ progress: 100 })}`);
+							sseEmitter.write("\n\n");
+							sseEmitter.flush();
+
+							const transcriptionEndTime = Date.now();
+							const totalTranscriptionTime =
+								transcriptionEndTime - transcriptionStartTime;
+							completionTime = totalDownloadTime + totalTranscriptionTime;
+
+							console.log(
+								`Transcription finished in ${totalTranscriptionTime}ms`
+							);
+						})
+						.on("close", () => {
+							const filenameNoExt = filename.substring(
+								0,
+								filename.lastIndexOf(".")
+							);
+
+							const formattedTime = formatCompletionTime(completionTime);
+
+							res.status(200).json({
+								result: "Video successfully transcribed!",
+								filename: filenameNoExt,
+								transcribedText: transcribedText.toString(),
+								videoMetadata: audioFileObject,
+								completionTime: formattedTime,
+								videoThumbnail,
+							});
+
+							if (tempInputFilePath) {
+								fs.unlink(tempInputFilePath, (err) => console.error(err));
+							}
+						})
+						.on("error", (err) => {
+							console.log(`TranscriptionError: ${err}`);
 						});
-
-						// remove temp file
-						fs.unlink(tempInputFilePath, (err) => console.error(err));
-					})
-					.on("error", (err) => {
-						console.log(`TranscriptionError: ${err}`);
-					});
-			});
+				});
 		});
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		res
 			.status(500)
 			.json({ message: "Encountered error while processing video!" });
