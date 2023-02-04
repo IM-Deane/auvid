@@ -5,6 +5,7 @@ const formidable = require("formidable");
 const mv = require("mv");
 
 const EventEmitterManagerService = require("../utils/event-service");
+const { formatCompletionTime } = require("../utils/index");
 
 /**
  * Handles file upload and audio transcription
@@ -31,7 +32,7 @@ function uploadAndTranscribeAudio(req, res) {
 				return;
 			}
 
-			// send progress 50% update
+			// mock progress events at 40%
 			sseEmitter.write(`event: ${guid}\n`);
 			sseEmitter.write(`data: ${JSON.stringify({ progress: 40 })}`);
 			sseEmitter.write("\n\n");
@@ -46,6 +47,8 @@ function uploadAndTranscribeAudio(req, res) {
 			const newPath = `./temp/${filename}`;
 			mv(oldPath, newPath, (err) => err && console.log(err));
 
+			let completionTime = 0;
+			const startTime = Date.now();
 			// use python to transcribe file's audio to text
 			const python = spawn("python", ["python/transcribe.py", newPath]);
 
@@ -66,6 +69,9 @@ function uploadAndTranscribeAudio(req, res) {
 					sseEmitter.write(`data: ${JSON.stringify({ progress: 100 })}`);
 					sseEmitter.write("\n\n");
 					sseEmitter.flush(); // end of chunk
+
+					const endTime = Date.now();
+					completionTime = endTime - startTime;
 				});
 
 			python.stderr.on("data", (data) => {
@@ -74,12 +80,15 @@ function uploadAndTranscribeAudio(req, res) {
 
 			python.on("close", () => {
 				const filenameNoExt = filename.substring(0, filename.lastIndexOf("."));
+				const formattedTime = formatCompletionTime(completionTime);
+				console.log(`Process finished in ${formattedTime}`);
 
 				// send file data
 				res.status(200).json({
 					result: "File uploaded and transcribed successfully",
 					filename: filenameNoExt,
 					transcribedText,
+					completionTime: formattedTime,
 				});
 
 				// cleanup temp file

@@ -15,6 +15,7 @@ function FileUploader({ handleResult }) {
 	const [currentFile, setCurrentFile] = useState<File>();
 	const [uploadProgress, setUploadProgress] = useState<number>(0);
 	const [transcribeProgress, setTranscribeProgress] = useState<number>(1);
+	const [completionTime, setCompletionTime] = useState<number>(0);
 
 	/**
 	 * Handles file upload and transcription progress updates
@@ -101,6 +102,8 @@ function FileUploader({ handleResult }) {
 				TranscriptionType.audio
 			);
 
+			setCompletionTime(response.data.completionTime);
+
 			response.data["uploadType"] = "audio";
 
 			handleResult(response.data);
@@ -126,6 +129,7 @@ function FileUploader({ handleResult }) {
 		} finally {
 			setLoading(false);
 			setSelectedFiles(undefined);
+			setCurrentFile(undefined);
 		}
 	};
 
@@ -262,6 +266,13 @@ function FileUploader({ handleResult }) {
 					</div>
 
 					<div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+						{completionTime ? (
+							<span className="mt-2 mr-8 text-sm text-indigo-500">
+								Completed transcription in <strong>{completionTime}</strong>
+							</span>
+						) : (
+							""
+						)}
 						<LoadingButton
 							isLoading={loading}
 							text="Upload file"
