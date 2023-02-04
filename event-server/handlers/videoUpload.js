@@ -124,9 +124,12 @@ async function uploadAndTranscribeVideo(req, res) {
 								result: "Video successfully transcribed!",
 								filename: filenameNoExt,
 								transcribedText: transcribedText.toString(),
-								videoMetadata: audioFileObject,
+								metadata: audioFileObject,
 								completionTime: formattedTime,
-								videoThumbnail,
+								thumbnail: videoThumbnail,
+								originalURL: videoURL,
+								videoTitle: output.fulltitle,
+								videoId: output.id,
 							});
 
 							if (tempInputFilePath) {

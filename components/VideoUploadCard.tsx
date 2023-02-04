@@ -154,28 +154,33 @@ function VideoUploadCard({ fileData, setShowAlert, setError }) {
 		<div>
 			<div className="overflow-hidden bg-white shadow sm:rounded-lg">
 				<div className="px-4 py-5 sm:px-6">
-					<div key={fileData.meta.videoThumbnail} className="relative">
+					<div key={fileData.meta.thumbnail} className="relative">
 						<div className="group aspect-w-10 aspect-h-7 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100">
 							<img
-								src={fileData.meta.videoThumbnail}
+								src={fileData.meta.thumbnail}
 								alt={fileData.filename}
 								className="pointer-events-none object-cover group-hover:opacity-75"
 							/>
-							<button
+							<a
+								href={fileData.meta.originalURL}
+								target="_blank"
 								type="button"
 								className="absolute inset-0 focus:outline-none"
 							>
 								<span className="sr-only">
 									View details for {fileData.filename}
 								</span>
-							</button>
+							</a>
 						</div>
-						{/* <p className="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">
-							{fileData.meta.videoMetaData.video.title}
+						<p className="pointer-events-none mt-2 block truncate text-sm font-bold text-gray-900">
+							{fileData.meta.videoTitle}
 						</p>
 						<p className="pointer-events-none block text-sm font-medium text-gray-500">
-							{fileData.meta.videoMetaData.video.id}
-						</p> */}
+							ID: {fileData.meta.videoId}
+						</p>
+						<p className="pointer-events-none block text-sm font-medium text-gray-500">
+							URL: {fileData.meta.originalURL}
+						</p>
 					</div>
 				</div>
 				<div className="border-t border-gray-200 px-4 py-5 sm:p-0">

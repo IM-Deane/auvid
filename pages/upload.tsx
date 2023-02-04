@@ -17,6 +17,12 @@ const AudioUpload = () => {
 	const [isEditing, setIsEditing] = useState(false); // used to render text form
 	const [uploadData, setUploadData] = useState({
 		uploadType: "",
+		metadata: {
+			videoId: "",
+			videoTitle: "",
+			originalURL: "",
+			thumbnail: "",
+		},
 	});
 	const [tabs, setTabs] = useState([
 		{ id: 0, name: "Video", icon: VideoCameraIcon, current: true },
@@ -45,6 +51,7 @@ const AudioUpload = () => {
 		} else {
 			setError({ status: false, message: "" }); // reset error status
 		}
+		console.log(data);
 
 		setUploadData(data);
 		setTranscribedText(data.transcribedText);
@@ -92,6 +99,7 @@ const AudioUpload = () => {
 								fileData={{
 									filename: uploadedFile,
 									transcribedText,
+									meta: uploadData,
 								}}
 								setShowAlert={setShowAlert}
 								setError={setError}

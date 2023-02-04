@@ -10,7 +10,7 @@ import { TranscriptionType } from "../../utils/enums";
 function VideoLinkUploader({ handleResult }) {
 	// FIXME: remove default after testing complete
 	const [videoURLInput, setVideoURLInput] = useState<string>(
-		"https://www.youtube.com/watch?v=I4DjHHVHWAE"
+		"https://www.youtube.com/watch?v=JzPfMbG1vrE"
 	);
 	const [videoInputError, setVideoInputError] = useState<string>("");
 	const [loading, setLoading] = useState(false);
@@ -115,7 +115,6 @@ function VideoLinkUploader({ handleResult }) {
 			);
 
 			// side effect: track transcription usage
-
 			await AnalyticsService.createTranscriptionEvent(
 				response.data.filename,
 				TranscriptionType.video
