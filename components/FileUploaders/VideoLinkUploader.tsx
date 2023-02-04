@@ -8,7 +8,10 @@ import LoadingButton from "../LoadingButton";
 import { TranscriptionType } from "../../utils/enums";
 
 function VideoLinkUploader({ handleResult }) {
-	const [videoURLInput, setVideoURLInput] = useState<string>("");
+	// FIXME: remove default after testing complete
+	const [videoURLInput, setVideoURLInput] = useState<string>(
+		"https://www.youtube.com/watch?v=I4DjHHVHWAE"
+	);
 	const [videoInputError, setVideoInputError] = useState<string>("");
 	const [loading, setLoading] = useState(false);
 	const [isProcessingVideo, setIsProcessingVideo] = useState(false);
@@ -76,7 +79,7 @@ function VideoLinkUploader({ handleResult }) {
 				// calculate progress for initial upload (not transcription). Might not need this.
 				(fileUploadEvent) =>
 					setUploadProgress(
-						Math.round((100 * fileUploadEvent.loaded) / fileUploadEvent.total)
+						Math.round((50 * fileUploadEvent.loaded) / fileUploadEvent.total)
 					)
 			);
 		});
@@ -112,11 +115,13 @@ function VideoLinkUploader({ handleResult }) {
 			);
 
 			// side effect: track transcription usage
+
 			await AnalyticsService.createTranscriptionEvent(
 				response.data.filename,
 				TranscriptionType.video
 			);
-			setCompletionTime(response.data.completionTimeInSeconds);
+
+			setCompletionTime(response.data.completionTime);
 			setVideoURLInput("");
 
 			response.data["uploadType"] = "video";
@@ -151,6 +156,8 @@ function VideoLinkUploader({ handleResult }) {
 	 * and transcription process.
 	 */
 	const getTotalProgress = () => {
+		if (transcribeProgress === 100) return 100; // transcription complete
+
 		const progress = Math.round(
 			((uploadProgress + transcribeProgress) / 200) * 100
 		);
@@ -173,7 +180,7 @@ function VideoLinkUploader({ handleResult }) {
 							<h4 className="sr-only">Status</h4>
 							<p className="text-sm font-medium text-gray-900">
 								{uploadProgress < 100 && transcribeProgress < 100
-									? "Transcribing video..."
+									? "Processing video..."
 									: ""}
 							</p>
 							<div className="mt-6" aria-hidden="true">
@@ -187,10 +194,10 @@ function VideoLinkUploader({ handleResult }) {
 									/>
 								</div>
 								<div className="mt-6 hidden grid-cols-4 text-sm font-medium text-gray-600 sm:grid">
-									<div className="text-indigo-600">Finding video</div>
+									<div className="text-indigo-600">Downloading video</div>
 									<div
 										className={`text-center ${
-											uploadProgress === 100 ? "text-indigo-600" : ""
+											uploadProgress >= 45 ? "text-indigo-600" : ""
 										}`}
 									>
 										Extracting audio
@@ -243,7 +250,7 @@ function VideoLinkUploader({ handleResult }) {
 									className="mt-2 text-sm text-indigo-500"
 									id="video-completion-time"
 								>
-									Completed transcription in {completionTime}s.
+									Completed transcription in {completionTime}.
 								</p>
 							) : (
 								<p

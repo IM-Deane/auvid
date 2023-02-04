@@ -170,12 +170,12 @@ function VideoUploadCard({ fileData, setShowAlert, setError }) {
 								</span>
 							</button>
 						</div>
-						<p className="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">
+						{/* <p className="pointer-events-none mt-2 block truncate text-sm font-medium text-gray-900">
 							{fileData.meta.videoMetaData.video.title}
 						</p>
 						<p className="pointer-events-none block text-sm font-medium text-gray-500">
 							{fileData.meta.videoMetaData.video.id}
-						</p>
+						</p> */}
 					</div>
 				</div>
 				<div className="border-t border-gray-200 px-4 py-5 sm:p-0">
@@ -266,7 +266,7 @@ function VideoUploadCard({ fileData, setShowAlert, setError }) {
 								{summarizedText}
 							</dd>
 							{/* only show button if there's enough text to summarize  */}
-							{transcribedText.length > 15 && (
+							{transcribedText?.length > 15 && (
 								<div className="mt-4">
 									<LoadingButton
 										isLoading={loading}
