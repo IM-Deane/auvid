@@ -1,7 +1,6 @@
-const fs = require("fs");
-const stream = require("stream");
 const https = require("https");
 const { spawn } = require("child_process");
+const fs = require("fs");
 
 const EventEmitterManagerService = require("../utils/event-service");
 const VideoService = require("../utils/video-service");
@@ -41,21 +40,18 @@ async function uploadAndTranscribeVideo(req, res) {
 			original_url: videoURL,
 		};
 
-		let tempInputFilePath = "";
 		let transcribedText = "";
 		let completionTime = 0;
 		let downloadProgress = 1;
 		https.get(audioFileObject.url, (downloadResponse) => {
-			tempInputFilePath = `./temp/${filename}`;
+			const tempInputFilePath = `./temp/${filename}`;
+			const writer = fs.createWriteStream(tempInputFilePath);
 
-			const python = spawn("python", ["./python/transcribe.py"]);
 			let totalDownloadTime = 0;
 			let downloadStartTime = Date.now();
 
 			console.log("Starting download...");
-
-			// send downloaded audio to python for transcription
-			downloadResponse.pipe(python.stdin);
+			downloadResponse.pipe(writer);
 
 			downloadResponse
 				.on("data", (chunk) => {
@@ -80,6 +76,63 @@ async function uploadAndTranscribeVideo(req, res) {
 					console.log(
 						`Finished downloading audio file in ${totalDownloadTime}ms`
 					);
+
+					// transcription pipeline
+					const python = spawn("python", [
+						"./python/transcribe.py",
+						tempInputFilePath,
+					]);
+					const transcriptionStartTime = Date.now();
+
+					python.stdout
+						.on("data", (chunk) => {
+							sseEmitter.write(`event: ${guid}\n`);
+							sseEmitter.write(`data: ${JSON.stringify({ progress: 75 })}`);
+							sseEmitter.write("\n\n");
+							sseEmitter.flush();
+
+							transcribedText += chunk; // add to buffer
+						})
+						.on("end", () => {
+							// send final progress update to client
+							sseEmitter.write(`event: ${guid}\n`);
+							sseEmitter.write(`data: ${JSON.stringify({ progress: 100 })}`);
+							sseEmitter.write("\n\n");
+							sseEmitter.flush();
+
+							const transcriptionEndTime = Date.now();
+							const totalTranscriptionTime =
+								transcriptionEndTime - transcriptionStartTime;
+							completionTime = totalDownloadTime + totalTranscriptionTime;
+
+							console.log(
+								`Transcription finished in ${totalTranscriptionTime}ms`
+							);
+						})
+						.on("close", () => {
+							const filenameNoExt = filename.substring(
+								0,
+								filename.lastIndexOf(".")
+							);
+
+							const formattedTime = formatCompletionTime(completionTime);
+
+							res.status(200).json({
+								result: "Video successfully transcribed!",
+								filename: filenameNoExt,
+								transcribedText: transcribedText.toString(),
+								metadata: audioFileObject,
+								completionTime: formattedTime,
+								thumbnail: videoThumbnail,
+								originalURL: videoURL,
+								videoTitle: output.fulltitle,
+								videoId: output.id,
+							});
+						});
+
+					python.stderr.on("data", (data) => {
+						console.log(`TranscriptionError: ${data}`);
+					});
 				})
 				.on("error", (error) => {
 					if (error.code == "EPIPE") {
@@ -87,58 +140,6 @@ async function uploadAndTranscribeVideo(req, res) {
 						process.exit(0);
 					}
 				});
-
-			// transcription pipeline
-			const transcriptionStartTime = Date.now();
-
-			python.stdout
-				.on("data", (chunk) => {
-					console.log("Python sent another chunk", chunk.toString());
-					sseEmitter.write(`event: ${guid}\n`);
-					sseEmitter.write(`data: ${JSON.stringify({ progress: 75 })}`);
-					sseEmitter.write("\n\n");
-					sseEmitter.flush();
-
-					transcribedText += chunk; // add to buffer
-				})
-				.on("end", () => {
-					// send final progress update to client
-					sseEmitter.write(`event: ${guid}\n`);
-					sseEmitter.write(`data: ${JSON.stringify({ progress: 100 })}`);
-					sseEmitter.write("\n\n");
-					sseEmitter.flush();
-
-					const transcriptionEndTime = Date.now();
-					const totalTranscriptionTime =
-						transcriptionEndTime - transcriptionStartTime;
-					completionTime = totalDownloadTime + totalTranscriptionTime;
-
-					console.log(`Transcription finished in ${totalTranscriptionTime}ms`);
-				})
-				.on("close", () => {
-					const filenameNoExt = filename.substring(
-						0,
-						filename.lastIndexOf(".")
-					);
-
-					const formattedTime = formatCompletionTime(completionTime);
-
-					res.status(200).json({
-						result: "Video successfully transcribed!",
-						filename: filenameNoExt,
-						transcribedText: transcribedText.toString(),
-						metadata: audioFileObject,
-						completionTime: formattedTime,
-						thumbnail: videoThumbnail,
-						originalURL: videoURL,
-						videoTitle: output.fulltitle,
-						videoId: output.id,
-					});
-				});
-
-			python.stderr.on("data", (data) => {
-				console.log(`TranscriptionError: ${data}`);
-			});
 		});
 	} catch (error) {
 		console.error(error);

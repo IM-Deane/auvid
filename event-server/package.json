@@ -20,6 +20,6 @@
 		"mv": "^2.1.1",
 		"nodemon": "^2.0.20",
 		"uuid": "^9.0.0",
-		"youtube-dl-exec": "^2.1.11"
+		"youtube-dl-exec": "^2.4.0"
 	}
 }

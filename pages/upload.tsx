@@ -51,7 +51,6 @@ const AudioUpload = () => {
 		} else {
 			setError({ status: false, message: "" }); // reset error status
 		}
-		console.log(data);
 
 		setUploadData(data);
 		setTranscribedText(data.transcribedText);

@@ -16,7 +16,6 @@ function VideoUploadCard({ fileData, setShowAlert, setError }) {
 	let { transcribedText } = fileData;
 	// format transcription
 	transcribedText = trimEdgesAndCapitalizeFirstLetter(transcribedText);
-	console.log(fileData);
 
 	const [filename, setFilename] = useState<string>(fileData.filename);
 	const [documentTitle, setDocumentTitle] = useState<string>("");

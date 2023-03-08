@@ -21,8 +21,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 					"The user does not have an active session or is not authenticated",
 			});
 
-		// get user id
-		const userID = user.id;
 		const { filename, documentTitle, fullText, summary } = req.body;
 
 		// convert filename to filepath
@@ -65,21 +63,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				console.log("UPLOADING CONTENTS TO WEB STORAGE...");
 
 				// 4. save the file to user folder (prefixed by user id)
+				const filename = filenameWithExt
+					.replace(/[^a-z0-9.]/gi, "-")
+					.toLowerCase();
+
 				const { error } = await supabase.storage
 					.from("notes")
-					.upload(`${userID}/${filenameWithExt}`, data, {
+					.upload(`${user.id}/${filename}`, data, {
 						cacheControl: "3600", // cache for 1 hour
 						contentType: "text/plain",
-						upsert: true, // overwrite existing file
+						upsert: true,
 					});
 
-				if (error) throw new Error(error.message);
+				if (error) {
+					console.error(error.message);
+					return res.status(500).json({ message: error.message });
+				}
 
 				console.log("SUCCESSFULLY UPLOADED FILE...");
 
 				res.status(200).json({
 					message: "Successfully uploaded file",
-					filename: filenameWithExt,
+					filename: filename,
 				});
 
 				console.log("REMOVING TEMPORARY FILES...");
