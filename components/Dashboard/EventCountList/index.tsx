@@ -8,6 +8,11 @@ import LoadingSkeleton from "../../cards/LoadingSkeleton";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import { EnvelopeOpenIcon } from "@heroicons/react/24/outline";
 
+interface EventCountListItem {
+	key: string;
+	value: number;
+}
+
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
@@ -22,7 +27,8 @@ function EventCountList() {
 	if (isLoading) return <LoadingSkeleton count={3} />;
 	if (error) return <p>Error!</p>;
 
-	const eventCounts = data.data;
+	const eventCounts: EventCountListItem = data.data;
+	console.log(data);
 
 	return (
 		<dt className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

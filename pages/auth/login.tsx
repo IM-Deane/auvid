@@ -1,17 +1,24 @@
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 import LoginForm from "../../components/Auth/LoginForm";
 
 function login() {
 	const supabase = useSupabaseClient();
 	const router = useRouter();
-	supabase.auth.getSession().then(({ data }) => {
-		if (data.session) {
-			router.push("/");
+	const user = useUser();
+
+	useEffect(() => {
+		if (user) {
+			supabase.auth.getSession().then(({ data }) => {
+				if (data.session) {
+					router.push("/");
+				}
+			});
 		}
-	});
+	}, [user]);
 
 	return (
 		<div>

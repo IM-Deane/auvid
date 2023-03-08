@@ -2,7 +2,7 @@ import { useState } from "react";
 import { GetServerSidePropsContext } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Database } from "../types/supabase";
+import type { Database } from "../supabase/types/public";
 
 import Alert from "../components/Alert";
 import Layout from "../components/Layout";
@@ -86,7 +86,7 @@ const AccountPage = ({ user }: { user: FullUser }) => {
 	};
 
 	return (
-		<Layout title="Account | RustleAI">
+		<Layout title="Account | Auvid">
 			<div className="mt-5">
 				<form
 					onSubmit={updateUser}
@@ -124,7 +124,7 @@ const AccountPage = ({ user }: { user: FullUser }) => {
 												name="username"
 												id="username"
 												autoComplete="username"
-												value={profile.username}
+												value={profile.username || ""}
 												onChange={onProfileFieldChange}
 												className="block w-full min-w-0 flex-1 rounded-md rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 											/>
@@ -223,7 +223,7 @@ const AccountPage = ({ user }: { user: FullUser }) => {
 											id="email"
 											name="email"
 											type="email"
-											value={email}
+											value={email ?? ""}
 											autoComplete="email"
 											onChange={(e) => setEmail(e.target.value)}
 											className="block w-full max-w-lg rounded-md border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -265,7 +265,7 @@ const AccountPage = ({ user }: { user: FullUser }) => {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 	// Create authenticated Supabase Client
-	const supabase = createServerSupabaseClient(ctx);
+	const supabase = createServerSupabaseClient<Database>(ctx);
 	// get session
 	const {
 		data: { session },

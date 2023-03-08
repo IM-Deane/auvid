@@ -1,7 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { Database } from "../../../supabase/types/public";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-
-import prisma from "../../../utils/prisma-client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "GET") {
@@ -9,23 +8,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
-		// Create authenticated Supabase Client
-		const supabase = createServerSupabaseClient({ req, res });
+		const supabase = createServerSupabaseClient<Database>({ req, res });
 
 		const {
 			data: { session },
 		} = await supabase.auth.getSession();
 
-		const events = await prisma.events.findMany({
-			where: {
-				profile_id: session.user.id,
-			},
-			include: {
-				profile: true,
-			},
-		});
+		const { data, error } = await supabase
+			.from("events")
+			.select("*")
+			.eq("profile_id", session.user.id);
 
-		res.status(200).json({ events, profile: events[0].profile });
+		if (error) {
+			console.log(error);
+			res.status(500).json({ error: error.message });
+			return;
+		}
+
+		res.status(200).json({ events: data });
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ error: error.message });

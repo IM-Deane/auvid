@@ -9,14 +9,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
-		// Create authenticated Supabase Client
 		const supabase = createServerSupabaseClient({ req, res });
-		// Check for session
 		const {
-			data: { session },
-		} = await supabase.auth.getSession();
+			data: { user },
+		} = await supabase.auth.getUser();
 
-		if (!session)
+		if (!user)
 			return res.status(401).json({
 				error: "not_authenticated",
 				message:
@@ -24,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 
 		// get user id
-		const userID = session.user.id;
+		const userID = user.id;
 		const { filename, documentTitle, fullText, summary } = req.body;
 
 		// convert filename to filepath

@@ -80,7 +80,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 -- Name: note_action_type; Type: TYPE; Schema: events; Owner: postgres
 --
 
-CREATE TYPE "events"."note_action_type" AS ENUM (
+CREATE TYPE "public"."note_action_type" AS ENUM (
     'uploaded',
     'downloaded',
     'deleted',
@@ -88,20 +88,20 @@ CREATE TYPE "events"."note_action_type" AS ENUM (
 );
 
 
-ALTER TYPE "events"."note_action_type" OWNER TO "postgres";
+ALTER TYPE "public"."note_action_type" OWNER TO "postgres";
 
 --
 -- Name: transcription_type; Type: TYPE; Schema: events; Owner: postgres
 --
 
-CREATE TYPE "events"."transcription_type" AS ENUM (
+CREATE TYPE "public"."transcription_type" AS ENUM (
     'audio',
     'video',
     'meeting'
 );
 
 
-ALTER TYPE "events"."transcription_type" OWNER TO "postgres";
+ALTER TYPE "public"."transcription_type" OWNER TO "postgres";
 
 --
 -- Name: handle_new_user(); Type: FUNCTION; Schema: public; Owner: postgres
@@ -129,7 +129,7 @@ SET default_table_access_method = "heap";
 -- Name: events; Type: TABLE; Schema: events; Owner: postgres
 --
 
-CREATE TABLE "events"."events" (
+create table "public"."events" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "created_at" timestamp(6) with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "updated_at" timestamp(6) with time zone,
@@ -139,46 +139,46 @@ CREATE TABLE "events"."events" (
 );
 
 
-ALTER TABLE "events"."events" OWNER TO "postgres";
+ALTER TABLE "public"."events" OWNER TO "postgres";
 
 --
 -- Name: notes; Type: TABLE; Schema: events; Owner: postgres
 --
 
-CREATE TABLE "events"."notes" (
+create table "public"."notes" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "has_summary" boolean DEFAULT false NOT NULL,
-    "type" "events"."note_action_type" DEFAULT 'uploaded'::"events"."note_action_type" NOT NULL,
+    "type" "public"."note_action_type" DEFAULT 'uploaded'::"public"."note_action_type" NOT NULL,
     "event_id" "uuid" NOT NULL
 );
 
 
-ALTER TABLE "events"."notes" OWNER TO "postgres";
+ALTER TABLE "public"."notes" OWNER TO "postgres";
 
 --
 -- Name: summaries; Type: TABLE; Schema: events; Owner: postgres
 --
 
-CREATE TABLE "events"."summaries" (
+create table "public"."summaries" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "event_id" "uuid" NOT NULL
 );
 
 
-ALTER TABLE "events"."summaries" OWNER TO "postgres";
+ALTER TABLE "public"."summaries" OWNER TO "postgres";
 
 --
 -- Name: transcriptions; Type: TABLE; Schema: events; Owner: postgres
 --
 
-CREATE TABLE "events"."transcriptions" (
+create table "public"."transcriptions" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "event_id" "uuid" NOT NULL,
-    "type" "events"."transcription_type" DEFAULT 'audio'::"events"."transcription_type" NOT NULL
+    "type" "public"."transcription_type" DEFAULT 'audio'::"public"."transcription_type" NOT NULL
 );
 
 
-ALTER TABLE "events"."transcriptions" OWNER TO "postgres";
+ALTER TABLE "public"."transcriptions" OWNER TO "postgres";
 
 --
 -- Name: profiles; Type: TABLE; Schema: public; Owner: postgres
@@ -201,7 +201,7 @@ ALTER TABLE "public"."profiles" OWNER TO "postgres";
 -- Name: events events_pkey; Type: CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."events"
+ALTER TABLE ONLY "public"."events"
     ADD CONSTRAINT "events_pkey" PRIMARY KEY ("id");
 
 
@@ -209,7 +209,7 @@ ALTER TABLE ONLY "events"."events"
 -- Name: notes notes_pkey; Type: CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."notes"
+ALTER TABLE ONLY "public"."notes"
     ADD CONSTRAINT "notes_pkey" PRIMARY KEY ("id");
 
 
@@ -217,7 +217,7 @@ ALTER TABLE ONLY "events"."notes"
 -- Name: summaries summaries_pkey; Type: CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."summaries"
+ALTER TABLE ONLY "public"."summaries"
     ADD CONSTRAINT "summaries_pkey" PRIMARY KEY ("id");
 
 
@@ -225,7 +225,7 @@ ALTER TABLE ONLY "events"."summaries"
 -- Name: transcriptions transcriptions_pkey; Type: CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."transcriptions"
+ALTER TABLE ONLY "public"."transcriptions"
     ADD CONSTRAINT "transcriptions_pkey" PRIMARY KEY ("id");
 
 
@@ -249,7 +249,7 @@ ALTER TABLE ONLY "public"."profiles"
 -- Name: events events_profile_id_fkey; Type: FK CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."events"
+ALTER TABLE ONLY "public"."events"
     ADD CONSTRAINT "events_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
 
 
@@ -257,24 +257,24 @@ ALTER TABLE ONLY "events"."events"
 -- Name: notes notes_event_id_fkey; Type: FK CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."notes"
-    ADD CONSTRAINT "notes_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"."events"("id") ON DELETE CASCADE;
+ALTER TABLE ONLY "public"."notes"
+    ADD CONSTRAINT "notes_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "public"."events"("id") ON DELETE CASCADE;
 
 
 --
 -- Name: summaries summaries_event_id_fkey; Type: FK CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."summaries"
-    ADD CONSTRAINT "summaries_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"."events"("id") ON DELETE CASCADE;
+ALTER TABLE ONLY "public"."summaries"
+    ADD CONSTRAINT "summaries_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "public"."events"("id") ON DELETE CASCADE;
 
 
 --
 -- Name: transcriptions transcriptions_event_id_fkey; Type: FK CONSTRAINT; Schema: events; Owner: postgres
 --
 
-ALTER TABLE ONLY "events"."transcriptions"
-    ADD CONSTRAINT "transcriptions_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"."events"("id") ON DELETE CASCADE;
+ALTER TABLE ONLY "public"."transcriptions"
+    ADD CONSTRAINT "transcriptions_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "public"."events"("id") ON DELETE CASCADE;
 
 
 --
@@ -289,25 +289,25 @@ ALTER TABLE ONLY "public"."profiles"
 -- Name: events; Type: ROW SECURITY; Schema: events; Owner: postgres
 --
 
-ALTER TABLE "events"."events" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "public"."events" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: notes; Type: ROW SECURITY; Schema: events; Owner: postgres
 --
 
-ALTER TABLE "events"."notes" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "public"."notes" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: summaries; Type: ROW SECURITY; Schema: events; Owner: postgres
 --
 
-ALTER TABLE "events"."summaries" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "public"."summaries" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: transcriptions; Type: ROW SECURITY; Schema: events; Owner: postgres
 --
 
-ALTER TABLE "events"."transcriptions" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "public"."transcriptions" ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: profiles Public profiles are viewable by everyone.; Type: POLICY; Schema: public; Owner: postgres

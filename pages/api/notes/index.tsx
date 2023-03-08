@@ -1,4 +1,5 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { Database } from "../../../supabase/types/public";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -7,18 +8,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
-		const supabase = createServerSupabaseClient({ req, res });
+		const supabase = createServerSupabaseClient<Database>({ req, res });
 
 		const {
-			data: { session },
-		} = await supabase.auth.getSession();
-
-		const userId = session.user.id;
+			data: { user },
+		} = await supabase.auth.getUser();
 
 		// get user's notes
 		const { data, error } = await supabase.storage
 			.from("notes")
-			.list(userId, { sortBy: { column: "created_at", order: "desc" } });
+			.list(user.id, { sortBy: { column: "created_at", order: "desc" } });
 
 		if (error) throw new Error(error.message);
 

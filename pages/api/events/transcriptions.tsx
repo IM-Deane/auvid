@@ -1,10 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 
-import { v4 } from "uuid";
-
-import prisma from "../../../utils/prisma-client";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { Database } from "../../../supabase/types/public";
 import { TranscriptionType } from "../../../utils/enums";
+
+import { v4 } from "uuid";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") {
@@ -12,21 +12,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
-		// Create authenticated Supabase Client
-		const supabase = createServerSupabaseClient({ req, res });
-		// Check for session
+		const supabase = createServerSupabaseClient<Database>({ req, res });
 		const {
-			data: { session },
-		} = await supabase.auth.getSession();
+			data: { user },
+		} = await supabase.auth.getUser();
 
-		if (!session)
+		if (!user)
 			return res.status(401).json({
 				error: "not_authenticated",
 				message:
 					"The user does not have an active session or is not authenticated",
 			});
 
-		const userId = session.user.id;
 		const { filename, type, metadata } = req.body;
 
 		if (!filename || !type)
@@ -34,7 +31,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 				error: "missing_data",
 				message: "Missing filename or type",
 			});
-		// check if type is is present in enum
 		else if (!(type in TranscriptionType)) {
 			return res.status(400).json({
 				error: "invalid_data",
@@ -43,39 +39,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		}
 
 		const requestConfig = {
-			request_id: v4(), // unique id for request
+			request_id: v4(),
 			headers: req.headers,
 			url: req.url,
 			method: req.method,
 			data: metadata ? metadata : req.body,
 		};
 
-		// create transcription event using prisma nested create
-		const event = await prisma.events.create({
-			data: {
-				description: `Transcribed text from ${filename}`, // has no extension
-				metadata: requestConfig,
-				profile: {
-					connect: { id: userId },
-				},
-				transcriptions: {
-					create: {
-						type: type,
-					}, // will reference uuid created by DB
-				},
-			},
-			select: {
-				id: true,
-				created_at: true,
-				description: true,
-				profile: true,
-				transcriptions: true,
-			},
-		});
+		const { data, error } = await supabase.rpc(
+			"handle_new_transcription_event",
+			{
+				event_description: `Transcribed text from ${filename}`,
+				event_meta: requestConfig,
+				event_type: type,
+			}
+		);
 
-		res.status(200).json({ event, message: "Transcription event created" });
+		if (error) throw error;
+
+		res
+			.status(200)
+			.json({ event: data, message: "Transcription event created" });
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		res.status(500).json({ error: error.message });
 	}
 };

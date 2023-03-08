@@ -1,9 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { Database } from "../../../supabase/types/public";
 
 import { v4 } from "uuid";
-
-import prisma from "../../../utils/prisma-client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "POST") {
@@ -11,57 +10,35 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
-		// Create authenticated Supabase Client
-		const supabase = createServerSupabaseClient({ req, res });
-		// Check for session
+		const supabase = createServerSupabaseClient<Database>({ req, res });
 		const {
-			data: { session },
-		} = await supabase.auth.getSession();
+			data: { user },
+		} = await supabase.auth.getUser();
 
-		if (!session)
+		if (!user)
 			return res.status(401).json({
 				error: "not_authenticated",
 				message:
 					"The user does not have an active session or is not authenticated",
 			});
 
-		const userId = session.user.id;
 		const { filename } = req.body;
-
 		const requestConfig = {
-			request_id: v4(), // unique id for request
+			request_id: v4(),
 			headers: req.headers,
 			url: req.url,
 			method: req.method,
 			data: req.body,
 		};
 
-		// create summaries event using prisma nested create
-		const event = await prisma.events.create({
-			data: {
-				description: `Summarized text for ${filename}`, // has no extension
-				metadata: requestConfig,
-				profile: {
-					connect: { id: userId },
-				},
-				summaries: {
-					create: {}, // will reference uuid created by DB
-				},
-			},
-			select: {
-				id: true,
-				created_at: true,
-				description: true,
-				profile: {
-					select: {
-						id: true, // just profile id
-					},
-				},
-				summaries: true,
-			},
+		const { data, error } = await supabase.rpc("handle_new_summary_event", {
+			event_description: `Summarized text for ${filename}`,
+			event_meta: requestConfig,
 		});
 
-		res.status(200).json({ event, message: "Summary event created" });
+		if (error) throw error;
+
+		res.status(200).json({ event: data, message: "Summary event created" });
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ error: error.message });

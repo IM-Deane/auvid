@@ -1,156 +1,51 @@
 import sys
-import itertools
-import numpy as np
+import os
 import whisper
-from typing import Union
-from whisper.decoding import DecodingResult
-import ffmpeg
+from whisper.utils import write_txt, write_vtt, write_srt
 
 
-CHUNK_SIZE = 1024 * 5 # 1024 bytes == 1KB
-
-def load_audio(file: Union[str, bytes], sr: int = 16000):
+def transcribe_file(file):
     """
-    Open an audio file and read as mono waveform, resampling as necessary
-
-    Parameters
-    ----------
-    file: (str, bytes)
-        The audio file to open or bytes of audio file
-
-    sr: int
-        The sample rate to resample the audio if necessary
-
-    Returns
-    -------
-    A NumPy array containing the audio waveform, in float32 dtype.
+    Accepts an audio file and transcribes it using Whisper.
     """
-    
-    if isinstance(file, bytes):
-        inp = file
-        file = 'pipe:'
-    else:
-        inp = None
-    
-    try:
-        # This launches a subprocess to decode audio while down-mixing and resampling as necessary.
-        # Requires the ffmpeg CLI and `ffmpeg-python` package to be installed.
-        out, _ = (
-            ffmpeg.input(file, threads=0)
-            .output("-", format="s16le", acodec="pcm_s16le", ac=1, ar=sr)
-            .run(cmd="ffmpeg", capture_stdout=True, capture_stderr=True, input=inp)
-        )
-    except ffmpeg.Error as e:
-        raise RuntimeError(f"Failed to load audio: {e.stderr.decode()}") from e
+    file_extension = os.path.splitext(file)[1]
+    if file_extension in ["mp3", ".wav", ".flac", ".ogg", ".m4a", ".wma"]:
+        model = whisper.load_model("tiny")
+        # load audio and pad/trim it to fit 30 seconds
+        # audio = whisper.load_audio(file)
+        # audio = whisper.pad_or_trim(audio)
 
-    return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0
+        # # make log-Mel spectrogram and move to the same device as the model
+        # mel = whisper.log_mel_spectrogram(audio).to(model.device)
+
+        # # decode the audio
+        # options = whisper.DecodingOptions()
+        # # options["sample_len"] = 10
+        # result = whisper.decode(model, mel, options)
+
+        # # print the recognized text
+        # print(result.text.strip())
 
 
-def process_input_stream_chunks(chunk_size=CHUNK_SIZE):
-    while True:
-        audio_bytes = sys.stdin.buffer.readline()
-        if not audio_bytes:
-            break
+        result = model.transcribe(file, language="english")
+        print(result["text"].strip()) # send to stdout
 
-        audio_array = load_audio(audio_bytes)
-        print(audio_array)
+        # audio_basename = os.path.basename(file)
+        # output_dir = os.path.dirname(file)
 
-        yield audio_array
+        # save TXT
+        # with open(os.path.join(output_dir, audio_basename + ".txt"), "w", encoding="utf-8") as txt:
+        #     write_txt(result["segments"], file=txt)
 
+        # # save VTT
+        # with open(os.path.join(output_dir, audio_basename + ".vtt"), "w", encoding="utf-8") as vtt:
+        #     write_vtt(result["segments"], file=vtt)
 
-def transcribe_test():
-    """
-    Reads audio data from stdin, transcribes it, and returns the resulting text.
-    """
-    model = whisper.load_model("tiny")
-
-    audio_bytes = sys.stdin.buffer.read()
-    if len(audio_bytes) == 0:
-        return
-    
-    audio_array = load_audio(audio_bytes)
-
-    # decode the audio
-    result = model.transcribe(audio_array, language="english", fp16=False)
-
-    sys.stdout.write(result["text"])
-    sys.stdout.flush()
+        # # save SRT
+        # with open(os.path.join(output_dir, audio_basename + ".srt"), "w", encoding="utf-8") as srt:
+        #     write_srt(result["segments"], file=srt)
 
 
-def fine_tuned_transcribe():
-    """
-    Reads audio data from stdin and uses low-level whisper methods to transcribe the audio.
-    """
-    model = whisper.load_model("tiny")
-
-    audio_bytes = sys.stdin.buffer.read()
-    if len(audio_bytes) == 0:
-        return
-    
-    audio_array = load_audio(audio_bytes)
-    formatted_audio = whisper.pad_or_trim(audio_array)
-    # make log-Mel spectrogram and move to the same device as the model
-    mel = whisper.log_mel_spectrogram(formatted_audio).to(model.device)
-
-    # decode the audio
-    options = whisper.DecodingOptions(language="english", fp16=False)
-    result: DecodingResult = whisper.decode(model, mel, options)
-
-    sys.stdout.write(result.text)
-    sys.stdout.flush()
-
-
-
-def transcribe():
-    """
-    Reads audio data from stdin, transcribes it, and returns the resulting text.
-    """
-    model = whisper.load_model("tiny")
-
-    audio_bytes = sys.stdin.buffer.read()
-    if len(audio_bytes) == 0:
-        return
-    
-    audio_array = load_audio(audio_bytes)
-
-    result = model.transcribe(audio_array, language="english", fp16=False)
-
-    sys.stdout.write(result["segments"])
-    sys.stdout.flush()
-
-
-def process_audio_chunks(chunk_size=CHUNK_SIZE):
-    while True:
-        audio_bytes = sys.stdin.buffer.read(chunk_size)
-        if not audio_bytes:
-            break
-        
-        numpy_array = load_audio(audio_bytes)
-        text = transcribe_audio(numpy_array)
-        sys.stdout.write(text)
-        sys.stdout.flush()
-
-        # yield text
-
-def transcribe_audio(audio_array):
-    model = whisper.load_model("tiny")
-
-    # transcribe the audio using openai's whisper library
-    result = model.transcribe(audio_array, language="english", fp16=False)
-    return result["text"]
-
-# audio_chunks = process_audio_chunks()
-# transcribed_text = ''
-
-# # Use itertools.chain() to combine all chunks of audio data
-# for chunk in audio_chunks:
-
-
-#     # Use next() to retrieve each chunk for processing
-#     transcribed_text += chunk
-
-# sys.stdout.write(transcribed_text)
+# pass resulting text back to node.js
+transcribe_file(sys.argv[1])
 # sys.stdout.flush()
-
-
-process_audio_chunks()

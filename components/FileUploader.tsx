@@ -21,7 +21,7 @@ function FileUploader({ handleResult }) {
 	 * Handles file upload and transcription progress updates
 	 */
 	const handleSubmit = () => {
-		if (!selectedFiles[0]) return;
+		if (!selectedFiles) return;
 
 		const currentFileData = selectedFiles[0]; // get first uploaded file
 

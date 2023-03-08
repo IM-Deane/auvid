@@ -4,7 +4,7 @@
 //
 import { User } from "@supabase/auth-helpers-nextjs";
 
-import { Json, TranscriptionType, NoteAction } from "../types/index";
+import { Json, TranscriptionType, NoteAction } from "../supabase/types/public";
 
 /**
  * User's profile data

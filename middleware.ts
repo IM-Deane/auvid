@@ -21,16 +21,14 @@ export async function middleware(req: NextRequest) {
 	const supabase = createMiddlewareSupabaseClient({ req, res });
 
 	const {
-		data: { session },
-	} = await supabase.auth.getSession();
+		data: { user },
+	} = await supabase.auth.getUser();
 
-	// Check for valid session
-	if (session?.user) {
-		// Authentication successful, forward request to protected route.
-		return res;
-	}
+	// Authentication successful, forward request to protected route.
+	if (user) return res;
+	console.log("new request", req.nextUrl.pathname);
 
-	if (req.nextUrl.pathname === "/auth/login") {
+	if (req.nextUrl.pathname.includes("/auth")) {
 		// If the user is not logged in and is trying to access the login page move to next.
 		return NextResponse.rewrite(req.nextUrl.pathname);
 	}
@@ -39,5 +37,6 @@ export async function middleware(req: NextRequest) {
 	const redirectUrl = req.nextUrl.clone();
 	redirectUrl.pathname = "/auth/login";
 	redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
+	await supabase.auth.signOut();
 	return NextResponse.redirect(redirectUrl);
 }
