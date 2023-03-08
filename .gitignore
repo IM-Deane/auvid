@@ -37,12 +37,15 @@ next-env.d.ts
 
 # static files
 /public/uploads
+temp/*
 
 
 # python
 venv
 .venv
 
-# event-server
+# TODO: event-server will eventually be a separate module
 event-server/.env
 event-server/node_modules/
+event-server/.venv/
+event-server/temp/*

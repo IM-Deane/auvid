@@ -23,35 +23,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const { filename, documentTitle, fullText, summary } = req.body;
 
-		// convert filename to filepath
-		const filenameWithExt = filename.replace(/\s+/g, "-").toLowerCase();
+		const assembledFiletext = assembleFileText(
+			documentTitle,
+			summary,
+			fullText
+		);
+		const filenameWithExt = filename.replace(/[^a-z0-9.]/gi, "-").toLowerCase();
 		const tempFilePath = `temp/${filenameWithExt}`;
 
-		// create a write stream (in append mode)
 		const writeStream = fs.createWriteStream(tempFilePath, { flags: "a" });
+		writeStream.write(assembledFiletext, (err) => {
+			if (err) throw err;
 
-		// 1. Append the document title
-		writeStream.write(`${documentTitle}\n\n`, (err) => {
-			if (err) throw new Error(err.message);
-
-			console.log("ADDED: [ DOCUMENT TITLE ]");
+			console.log("ADDED CONTENT TO FILE...");
 		});
-
-		// 2. If a summary exists append to file
-		if (summary)
-			writeStream.write(`Summary:\n${summary}\n\n`, (err) => {
-				if (err) throw new Error(err.message);
-
-				console.log("ADDED: [ SUMMARY ]");
-			});
-
-		// 3. Append transcript
-		writeStream.write(`Full Transcript:\n${fullText}\n\n`, (err) => {
-			if (err) throw new Error(err.message);
-			console.log("ADDED: [ TRANSCRIPT ]");
-		});
-
-		writeStream.end(); // finished writing to file
+		writeStream.end();
 
 		writeStream.on("finish", () => {
 			writeStream.close();
@@ -62,14 +48,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 				console.log("UPLOADING CONTENTS TO WEB STORAGE...");
 
-				// 4. save the file to user folder (prefixed by user id)
-				const filename = filenameWithExt
-					.replace(/[^a-z0-9.]/gi, "-")
-					.toLowerCase();
-
 				const { error } = await supabase.storage
 					.from("notes")
-					.upload(`${user.id}/${filename}`, data, {
+					.upload(`${user.id}/${filenameWithExt}`, data, {
 						cacheControl: "3600", // cache for 1 hour
 						contentType: "text/plain",
 						upsert: true,
@@ -84,12 +65,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 				res.status(200).json({
 					message: "Successfully uploaded file",
-					filename: filename,
+					filename: filenameWithExt,
 				});
 
 				console.log("REMOVING TEMPORARY FILES...");
 
-				// delete file from temp folder
+				// TODO: move this logic to a finally block?
 				fs.unlink(tempFilePath, (err) => {
 					if (err) throw new Error(err.message);
 
@@ -103,3 +84,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default handler;
+
+const assembleFileText = (
+	documentTitle: string,
+	summary: string,
+	fullText: string
+) => {
+	let fileText = `${documentTitle}\n\n`;
+
+	if (summary) fileText += `Summary:\n${summary}\n\n`;
+
+	fileText += `Full Transcript:\n${fullText}\n\n`;
+
+	return fileText;
+};
