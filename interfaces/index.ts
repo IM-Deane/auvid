@@ -4,7 +4,9 @@
 //
 import { User } from '@supabase/auth-helpers-nextjs'
 
-import { Json, NoteAction, TranscriptionType } from '../supabase/types/public'
+import { Database, Json } from '../supabase/types/public'
+
+type Enums = Database['public']['Enums']
 
 /**
  * User's profile data
@@ -43,7 +45,7 @@ export interface ProfileWithEvents extends Profile {
 export interface Transcription {
   id: string
   event_id: Event['id']
-  type: TranscriptionType
+  type: Enums['transcription_type']
 }
 
 /**
@@ -61,7 +63,7 @@ export interface Note {
   event_id: Event['id']
   has_summary: boolean
   id: string
-  type: NoteAction
+  type: Enums['note_action_type']
 }
 
 /**

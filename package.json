@@ -14,7 +14,7 @@
     "deploy": "vercel deploy",
     "test": "jest --watch",
     "test:ci": "jest --ci",
-    "supa-types": "npx supabase gen types typescript --project-id 'lmpnnrsmmrkwnuppugmh' --schema public > supabase/types/public.ts",
+    "supa-types": "npx supabase gen types typescript --local --schema public > supabase/types/public.ts",
     "type-check": "tsc",
     "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write '**/*.{js,jsx,ts,tsx}'",
