@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
 import { GetServerSidePropsContext } from 'next'
+import React, { useState } from 'react'
+
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import type { Database } from '../supabase/types/public'
 
 import Alert from '../components/Alert'
 import Layout from '../components/Layout'
-
 import { FullUser } from '../interfaces'
+import type { Database } from '../supabase/types/public'
 
 const AccountPage = ({ user }: { user: FullUser }) => {
   const supabase = useSupabaseClient<Database>()

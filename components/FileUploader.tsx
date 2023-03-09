@@ -2,12 +2,10 @@ import React, { useState } from 'react'
 
 import Dropzone from 'react-dropzone'
 
-import UploadService from '../utils/services/upload-service'
-import AnalyticsService from '../utils/services/analytics-service'
-
-import LoadingButton from './LoadingButton'
-
 import { TranscriptionType } from '../utils/enums'
+import AnalyticsService from '../utils/services/analytics-service'
+import UploadService from '../utils/services/upload-service'
+import LoadingButton from './LoadingButton'
 
 function FileUploader({ handleResult }) {
   const [selectedFiles, setSelectedFiles] = useState<any>(undefined)

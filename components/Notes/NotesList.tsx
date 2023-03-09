@@ -1,13 +1,13 @@
-import React from 'react'
-
 import Link from 'next/link'
-import prettyBytes from 'pretty-bytes'
+import React from 'react'
 
 import {
   PencilSquareIcon,
   PlusCircleIcon,
   XCircleIcon
 } from '@heroicons/react/20/solid'
+import prettyBytes from 'pretty-bytes'
+
 import LoadingSkeleton from '../cards/LoadingSkeleton'
 
 function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {

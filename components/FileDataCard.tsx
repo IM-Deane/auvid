@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-
-import AnalyticsService from '../utils/services/analytics-service'
-import NotesService from '../utils/services/notes-service'
+import React, { useEffect, useState } from 'react'
 
 import { File } from '../interfaces'
-
-import LoadingButton from './LoadingButton'
-import SelectInput from './SelectInput'
-
 import { trimEdgesAndCapitalizeFirstLetter } from '../utils'
 import { fileTypes } from '../utils/enums'
+import AnalyticsService from '../utils/services/analytics-service'
+import NotesService from '../utils/services/notes-service'
+import LoadingButton from './LoadingButton'
+import SelectInput from './SelectInput'
 
 function FileUploadCard({ fileData, setShowAlert, setError }) {
   let { transcribedText } = fileData

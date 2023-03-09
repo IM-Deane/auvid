@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 
 import { EventCountSearchParams } from '../../../types'

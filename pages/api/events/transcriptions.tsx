@@ -1,10 +1,10 @@
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
-
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { v4 } from 'uuid'
+
 import type { Database } from '../../../supabase/types/public'
 import { TranscriptionType } from '../../../utils/enums'
-
-import { v4 } from 'uuid'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {

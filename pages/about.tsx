@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
 
 import Layout from '../components/Layout'

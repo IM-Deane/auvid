@@ -1,7 +1,7 @@
-import fs from 'fs'
-
 import { NextApiRequest, NextApiResponse } from 'next'
+
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import fs from 'fs'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {

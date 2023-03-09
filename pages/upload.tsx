@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+
+import { SpeakerWaveIcon, VideoCameraIcon } from '@heroicons/react/20/solid'
 
 import Alert from '../components/Alert'
 import FileDataCard from '../components/FileDataCard'
 import FileUploader from '../components/FileUploader'
 import FileUploadTabs from '../components/FileUploaders/FileUploadTabs'
-import Layout from '../components/Layout'
 import VideoLinkUploader from '../components/FileUploaders/VideoLinkUploader'
+import Layout from '../components/Layout'
 import VideoUploadCard from '../components/VideoUploadCard'
-
-import { SpeakerWaveIcon, VideoCameraIcon } from '@heroicons/react/20/solid'
 
 const AudioUpload = () => {
   const [showAlert, setShowAlert] = useState(false)

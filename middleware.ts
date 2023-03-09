@@ -1,5 +1,6 @@
-import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { NextRequest, NextResponse } from 'next/server'
+
+import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs'
 
 export const config = {
   matcher: [

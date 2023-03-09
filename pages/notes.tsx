@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import useProfile from '../hooks/useProfile'
-
-import NotesService from '../utils/services/notes-service'
 
 import Alert from '../components/Alert'
 import DeleteModal from '../components/DeleteModal'
 import Layout from '../components/Layout'
 import NoteGallery from '../components/Notes/NotesList'
+import useProfile from '../hooks/useProfile'
+import NotesService from '../utils/services/notes-service'
 
 const NotesOverview = () => {
   const [showModal, setShowModal] = useState(false)

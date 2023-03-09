@@ -1,8 +1,8 @@
 import React from 'react'
 
-import Layout from '../components/Layout'
-import WelcomeHeader from '../components/Dashboard/WelcomeHeader'
 import EventCountList from '../components/Dashboard/EventCountList'
+import WelcomeHeader from '../components/Dashboard/WelcomeHeader'
+import Layout from '../components/Layout'
 
 const IndexPage = () => {
   return (

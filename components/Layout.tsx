@@ -1,20 +1,19 @@
-import React, { ReactNode, useState, useEffect, Fragment } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
 import Head from 'next/head'
+import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
+import React, { Fragment, ReactNode, useEffect, useState } from 'react'
 
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
-
 import {
   Bars3Icon,
-  DocumentDuplicateIcon,
   BookOpenIcon,
+  DocumentDuplicateIcon,
   HomeIcon,
   UserCircleIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
 import ZoroProfileImg from '../public/images/zoro-profile.jpg'
 

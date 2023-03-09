@@ -1,11 +1,10 @@
+import { GetServerSidePropsContext } from 'next'
 import React, { useState } from 'react'
 
-import { GetServerSidePropsContext } from 'next'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import prettyBytes from 'pretty-bytes'
 
 import Layout from '../../components/Layout'
-
 import { NoteFile } from '../../interfaces'
 import AnalyticsService from '../../utils/services/analytics-service'
 

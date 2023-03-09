@@ -1,6 +1,5 @@
-import React from 'react'
-
 import Link from 'next/link'
+import React from 'react'
 
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 

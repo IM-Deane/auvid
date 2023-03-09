@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { render, screen } from '@testing-library/react'
 import Home from '@/pages/index'
+import { render, screen } from '@testing-library/react'
 
 describe('Home', () => {
   it('renders a heading', () => {

@@ -1,12 +1,11 @@
-import React from 'react'
 import Link from 'next/link'
-
-import AnalyticsService from '../../../utils/services/analytics-service'
-
-import LoadingSkeleton from '../../cards/LoadingSkeleton'
+import React from 'react'
 
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 import { EnvelopeOpenIcon } from '@heroicons/react/24/outline'
+
+import AnalyticsService from '../../../utils/services/analytics-service'
+import LoadingSkeleton from '../../cards/LoadingSkeleton'
 
 interface EventCountListItem {
   key: string
