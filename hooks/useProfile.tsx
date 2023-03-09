@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import axiosFetcher from '../api/swr'
+import axiosFetcher from '../utils/swr'
 
 /**
  * Fetches current user's profile data.
