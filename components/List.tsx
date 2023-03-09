@@ -1,6 +1,7 @@
 import * as React from 'react'
 
-import { User } from '../interfaces'
+import { User } from '@supabase/auth-helpers-nextjs'
+
 import ListItem from './ListItem'
 
 type Props = {
