@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 
+import Alert from '../Alert'
 import LoadingButton from '../LoadingButton'
 
 interface FormData {
@@ -15,8 +16,16 @@ interface FormData {
   }
 }
 
-function LoginForm() {
+function RegistrationForm() {
   const [loading, setLoading] = useState<boolean>(false)
+  const [isShowingAlert, setIsShowingAlert] = useState<boolean>(false)
+  const [isError, setIsError] = useState<{
+    status: boolean
+    message: string
+  }>({
+    status: false,
+    message: ''
+  })
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
@@ -28,6 +37,13 @@ function LoginForm() {
 
   const supabase = useSupabaseClient()
   const router = useRouter()
+
+  const handleShowAlert = () => setIsShowingAlert(true)
+
+  const handleDismissAlert = () => {
+    setIsShowingAlert(false)
+    setIsError({ status: false, message: '' })
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -83,23 +99,27 @@ function LoginForm() {
 
     setLoading(true)
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session, user },
+      error
+    } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password
     })
 
     setLoading(false)
 
-    if (error) throw new Error(error.message)
-
-    // check for redirect url query param
-    const redirectUrl = router.query.redirectedFrom as string
-    if (redirectUrl) {
-      router.replace(redirectUrl) // send user back to where they came from
-      return
+    if (error) {
+      setIsError({ status: true, message: error.message })
+      handleShowAlert() // user needs to confirm email
+      console.error(error)
     }
 
-    router.push('/') // redirect to home
+    if (user && session) {
+      router.push('/')
+    } else if (!session && user) {
+      handleShowAlert() // user needs to confirm email
+    }
   }
 
   /**
@@ -115,21 +135,32 @@ function LoginForm() {
   return (
     <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
+        {isShowingAlert && (
+          <Alert
+            handleAlertDismiss={handleDismissAlert}
+            isError={isError.status}
+            text={
+              isError.status
+                ? isError.message
+                : 'Login successful! Check your email for the next steps.'
+            }
+          />
+        )}
         <img
           className='mx-auto h-12 w-auto'
           src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600'
           alt='Auvid company logo'
         />
         <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>
-          Sign in to your account
+          Sign up for a plan today
         </h2>
         <p className='mt-2 text-center text-sm text-gray-600'>
           Or{' '}
           <Link
-            href='/auth/signup'
+            href='/auth/login'
             className='font-medium text-indigo-600 hover:text-indigo-500'
           >
-            sign up for a plan today
+            Login into your account
           </Link>
         </p>
       </div>
@@ -151,10 +182,10 @@ function LoginForm() {
                   type='email'
                   value={formData.email}
                   autoComplete='email'
-                  placeholder='tony@starkindustries.mu'
+                  placeholder='bruce@wayneenterprises.gotham'
                   required
                   onChange={handleInputChange}
-                  className={getInputClasses('email')} // render different class based on error
+                  className={getInputClasses('email')}
                   aria-invalid={formData.error.email ? 'true' : 'false'}
                   aria-describedby={formData.error.email ? 'email-error' : ''}
                 />
@@ -180,45 +211,18 @@ function LoginForm() {
                   autoComplete='current-password'
                   required
                   onChange={handleInputChange}
-                  className={getInputClasses('password')} // render different class based on error
+                  className={getInputClasses('password')}
                 />
                 <p className='mt-2 text-sm text-red-500' id='password-error'>
                   {formData.error.password && formData.error.password}
                 </p>
               </div>
             </div>
-
-            <div className='flex items-center justify-between'>
-              {/* <div className="flex items-center">
-								<input
-									id="remember-me"
-									name="remember-me"
-									type="checkbox"
-									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-								/>
-								<label
-									htmlFor="remember-me"
-									className="ml-2 block text-sm text-gray-900"
-								>
-									Remember me
-								</label>
-							</div> */}
-
-              <div className='text-sm'>
-                <a
-                  href='#' // TODO: add link to forgot password page
-                  className='font-medium text-indigo-600 hover:text-indigo-500'
-                >
-                  Forgot your password?
-                </a>
-              </div>
-            </div>
-
             <div>
               <LoadingButton
                 isLoading={loading}
-                text='Sign in'
-                loadingText='Authenticating...'
+                text='Sign up'
+                loadingText='Signing up...'
                 handleClick={signInWithEmail}
               />
             </div>
@@ -303,4 +307,4 @@ function LoginForm() {
   )
 }
 
-export default LoginForm
+export default RegistrationForm

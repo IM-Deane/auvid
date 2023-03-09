@@ -1,6 +1,6 @@
 const serverCache = {
-	clients: {},
-	eventEmitters: {},
-};
+  clients: {},
+  eventEmitters: {}
+}
 
-module.exports = { serverCache };
+module.exports = { serverCache }

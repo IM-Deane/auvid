@@ -4,10 +4,10 @@
  * @returns {string} formatted text
  */
 export function trimEdgesAndCapitalizeFirstLetter(text: string) {
-	if (!text) return; // invalid text
+  if (!text) return // invalid text
 
-	if (text.length === 1) return text.toUpperCase(); // single letter
+  if (text.length === 1) return text.toUpperCase()
 
-	let newStr = text.trim(); // trim edges
-	return newStr.charAt(0).toUpperCase() + newStr.slice(1); // capitalize first letter
+  const newStr = text.trim()
+  return newStr.charAt(0).toUpperCase() + newStr.slice(1)
 }

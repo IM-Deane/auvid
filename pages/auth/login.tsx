@@ -1,30 +1,32 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import React from 'react'
 
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
-import LoginForm from "../../components/Auth/LoginForm";
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react'
+
+import LoginForm from '../../components/Auth/LoginForm'
 
 function login() {
-	const supabase = useSupabaseClient();
-	const router = useRouter();
-	const user = useUser();
+  const supabase = useSupabaseClient()
+  const router = useRouter()
+  const user = useUser()
 
-	useEffect(() => {
-		if (user) {
-			supabase.auth.getSession().then(({ data }) => {
-				if (data.session) {
-					router.push("/");
-				}
-			});
-		}
-	}, [user]);
+  useEffect(() => {
+    if (user) {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          router.push('/')
+        }
+      })
+    }
+  }, [user])
 
-	return (
-		<div>
-			<LoginForm />
-		</div>
-	);
+  return (
+    <div>
+      <LoginForm />
+    </div>
+  )
 }
 
-export default login;
+export default login

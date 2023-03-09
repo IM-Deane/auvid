@@ -1,7 +1,7 @@
-const helloRoutes = require("./hello");
-const apiRoutes = require("./api");
+const helloRoutes = require('./hello')
+const apiRoutes = require('./api')
 
 module.exports = {
-	helloRoutes,
-	apiRoutes,
-};
+  helloRoutes,
+  apiRoutes
+}

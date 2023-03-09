@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios'
 
 /**
  * Reusable data fetcher to be paired with `useSWR`.
@@ -7,6 +7,6 @@ import axios from "axios";
  * @returns {object}
  */
 const axiosFetcher = (url: string, ...args) =>
-	axios.get(url, ...args).then((res) => res.data);
+  axios.get(url, ...args).then((res) => res.data)
 
-export default axiosFetcher;
+export default axiosFetcher

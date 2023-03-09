@@ -15,7 +15,9 @@
     "test": "jest --watch",
     "test:ci": "jest --ci",
     "supa-types": "npx supabase gen types typescript --project-id 'lmpnnrsmmrkwnuppugmh' --schema public > supabase/types/public.ts",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "lint": "eslint '**/*.{ts,tsx}'",
+    "prettier": "prettier --write '**/*.{js,jsx,ts,tsx}'"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.7",

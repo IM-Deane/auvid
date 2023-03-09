@@ -40,19 +40,19 @@ export interface Database {
           event_id: string
           has_summary: boolean
           id: string
-          type: Database["events"]["Enums"]["note_action_type"]
+          type: Database['events']['Enums']['note_action_type']
         }
         Insert: {
           event_id: string
           has_summary?: boolean
           id?: string
-          type?: Database["events"]["Enums"]["note_action_type"]
+          type?: Database['events']['Enums']['note_action_type']
         }
         Update: {
           event_id?: string
           has_summary?: boolean
           id?: string
-          type?: Database["events"]["Enums"]["note_action_type"]
+          type?: Database['events']['Enums']['note_action_type']
         }
       }
       summaries: {
@@ -73,17 +73,17 @@ export interface Database {
         Row: {
           event_id: string
           id: string
-          type: Database["events"]["Enums"]["transcription_type"]
+          type: Database['events']['Enums']['transcription_type']
         }
         Insert: {
           event_id: string
           id?: string
-          type?: Database["events"]["Enums"]["transcription_type"]
+          type?: Database['events']['Enums']['transcription_type']
         }
         Update: {
           event_id?: string
           id?: string
-          type?: Database["events"]["Enums"]["transcription_type"]
+          type?: Database['events']['Enums']['transcription_type']
         }
       }
     }
@@ -94,8 +94,8 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      note_action_type: "uploaded" | "downloaded" | "deleted" | "updated"
-      transcription_type: "audio" | "video" | "meeting"
+      note_action_type: 'uploaded' | 'downloaded' | 'deleted' | 'updated'
+      transcription_type: 'audio' | 'video' | 'meeting'
     }
     CompositeTypes: {
       [_ in never]: never

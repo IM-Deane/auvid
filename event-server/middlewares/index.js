@@ -1,5 +1,5 @@
-const parseMultipartForm = require("./multipart-form-parser");
+const parseMultipartForm = require('./multipart-form-parser')
 
 module.exports = {
-	parseMultipartForm,
-};
+  parseMultipartForm
+}
