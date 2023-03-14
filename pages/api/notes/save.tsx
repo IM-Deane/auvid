@@ -25,9 +25,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const assembledFiletext = assembleFileText(documentTitle, summary, fullText)
     const filenameWithExt = filename.replace(/[^a-z0-9.]/gi, '-').toLowerCase()
-    const tempFilePath = `./public/temp/${filenameWithExt}`
 
-    const writeStream = fs.createWriteStream(tempFilePath, { flags: 'a' })
+    const writeStream = fs.createWriteStream(filenameWithExt, { flags: 'a' })
     writeStream.write(assembledFiletext, (err) => {
       if (err) throw err
 
@@ -39,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       writeStream.close()
       console.log('FINISHED WRITING TO FILE...')
 
-      fs.readFile(tempFilePath, 'utf8', async (err, data) => {
+      fs.readFile(filenameWithExt, 'utf8', async (err, data) => {
         if (err) throw new Error(err.message)
 
         console.log('UPLOADING CONTENTS TO WEB STORAGE...')
@@ -67,7 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         console.log('REMOVING TEMPORARY FILES...')
 
         // TODO: move this logic to a finally block?
-        fs.unlink(tempFilePath, (err) => {
+        fs.unlink(filenameWithExt, (err) => {
           if (err) throw new Error(err.message)
 
           console.log('DONE.')
