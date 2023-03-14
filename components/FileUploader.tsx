@@ -28,7 +28,7 @@ function FileUploader({ handleResult }) {
 
     // establish SSE connection
     const eventSrc = new EventSource(
-      'http://localhost:5000/api/events/progress'
+      `${process.env.NEXT_PUBLIC_SSE_URL}/api/events/progress`
     )
 
     let guidValue = null // ID for server event emitter
