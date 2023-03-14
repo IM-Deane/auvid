@@ -19,6 +19,7 @@
     "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@/components/*": ["components/*"],
+      "@/temp/*": ["temp/*"],
       "@/pages/*": ["pages/*"],
       "@/hooks/*": ["hooks/*"],
       "@/lib/*": ["lib/*"],

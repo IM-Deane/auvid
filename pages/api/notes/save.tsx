@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const assembledFiletext = assembleFileText(documentTitle, summary, fullText)
     const filenameWithExt = filename.replace(/[^a-z0-9.]/gi, '-').toLowerCase()
-    const tempFilePath = `temp/${filenameWithExt}`
+    const tempFilePath = `./public/temp/${filenameWithExt}`
 
     const writeStream = fs.createWriteStream(tempFilePath, { flags: 'a' })
     writeStream.write(assembledFiletext, (err) => {
