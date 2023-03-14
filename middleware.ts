@@ -27,7 +27,6 @@ export async function middleware(req: NextRequest) {
 
   // Authentication successful, forward request to protected route.
   if (user) return res
-  console.log('new request', req.nextUrl.pathname)
 
   if (req.nextUrl.pathname.includes('/auth')) {
     // If the user is not logged in and is trying to access the login page move to next.
