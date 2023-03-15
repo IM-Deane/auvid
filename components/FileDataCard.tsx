@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import toast from 'react-hot-toast'
+
 import { File } from '../interfaces'
 import { trimEdgesAndCapitalizeFirstLetter } from '../utils'
 import { fileTypes } from '../utils/enums'
@@ -8,8 +10,9 @@ import AnalyticsService from '../utils/services/analytics-service'
 import NotesService from '../utils/services/notes-service'
 import LoadingButton from './LoadingButton'
 import SelectInput from './SelectInput'
+import ToastAlert from './ToastAlert'
 
-function FileUploadCard({ fileData, setShowAlert, setError }) {
+function FileUploadCard({ fileData }) {
   let { transcribedText } = fileData
   // format transcription
   transcribedText = trimEdgesAndCapitalizeFirstLetter(transcribedText)
@@ -41,7 +44,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
   }
 
   const handleFileNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (filenameError) setFilenameError('') // clear error
+    if (filenameError) setFilenameError('')
 
     setFilename(e.target.value)
   }
@@ -49,7 +52,7 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
   const handleDocumentTitleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (documentTitleError) setDocumentTitleError('') // clear error
+    if (documentTitleError) setDocumentTitleError('')
 
     setDocumentTitle(e.target.value)
   }
@@ -66,6 +69,15 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
 
       const formattedNotes = trimEdgesAndCapitalizeFirstLetter(summary.data)
       setSummarizedText(formattedNotes)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          isOpen={visible}
+          title='Your transcription has been summarized'
+          message='We also prefer to keep things short and sweet. 😁'
+        />
+      ))
     } catch (error) {
       if (error.response) {
         // response with status code other than 2xx
@@ -80,6 +92,15 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
         console.log(error)
       }
       console.log(error.config)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          isOpen={visible}
+          title='It seems our servers perfer long-form content 😅'
+          message={error.message}
+        />
+      ))
     } finally {
       setLoading(false)
     }
@@ -100,7 +121,6 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
         throw new Error('Document title is required')
       }
 
-      // add selected extension to filename
       const filenameWithExt = `${filename}${filetype.ext}`
 
       // note upload events rely on the success of the notes request so we group together
@@ -116,7 +136,14 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
         AnalyticsService.createNotesUploadEvent(filename, hasSummary)
       ])
 
-      setShowAlert(true)
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          isOpen={visible}
+          title='Your notes been saved!'
+          message="We're glad you like our work. 😎"
+        />
+      ))
       // redirect to notes page after 3 seconds
       setTimeout(
         () => (router.push(`/notes/${uploadResponse.data.filename}`), 3000)
@@ -134,9 +161,16 @@ function FileUploadCard({ fileData, setShowAlert, setError }) {
         // something wrong with request
         console.log(error)
       }
-      setError({ status: true, message: 'Error saving notes' })
-      setShowAlert(true)
       console.log(error.config)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          isOpen={visible}
+          title="We've hit a snag while saving your note 😬"
+          message={error.message}
+        />
+      ))
     } finally {
       setIsSaving(false)
     }
