@@ -19,10 +19,10 @@
     "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@/components/*": ["components/*"],
-      "@/temp/*": ["temp/*"],
+      "@/tmp/*": ["tmp/*"],
       "@/pages/*": ["pages/*"],
       "@/hooks/*": ["hooks/*"],
-      "@/lib/*": ["lib/*"],
+      "@/utils/*": ["utils/*"],
       "@/styles/*": ["styles/*"]
     }
   },
