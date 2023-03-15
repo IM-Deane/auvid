@@ -57,15 +57,6 @@ const AccountPage = ({ user }: { user: FullUser }) => {
 
       if (profileRes.error) throw profileRes.error
 
-      toast.custom(({ visible }) => (
-        <ToastAlert
-          isOpen={visible}
-          title='Profile update successfully!'
-          message='Looking real good. 🤩'
-          type='success'
-        />
-      ))
-
       setProfile({ ...profileRes.data[0] })
     } catch (error) {
       toast.custom(({ visible }) => (
