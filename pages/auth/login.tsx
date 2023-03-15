@@ -1,8 +1,10 @@
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useEffect } from 'react'
 
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react'
+import siteConfig from 'site.config'
 
 import LoginForm from '../../components/Auth/LoginForm'
 
@@ -23,6 +25,9 @@ function login() {
 
   return (
     <div>
+      <Head>
+        <title>Login | {siteConfig.siteName}</title>
+      </Head>
       <LoginForm />
     </div>
   )

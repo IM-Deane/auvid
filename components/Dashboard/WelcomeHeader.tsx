@@ -1,5 +1,7 @@
 import React from 'react'
 
+import siteConfig from 'site.config'
+
 import useProfile from '../../hooks/useProfile'
 
 function WelcomeHeader() {
@@ -12,7 +14,9 @@ function WelcomeHeader() {
     <header>
       <h1 className='text-2xl font-semibold text-gray-900'>
         Welcome{' '}
-        {profile?.first_name ? `${profile.first_name}!` : 'to Auvid! 🔊'}
+        {profile?.first_name
+          ? `${profile.first_name}!`
+          : `to ${siteConfig.siteName}! 🔊`}
       </h1>
     </header>
   )

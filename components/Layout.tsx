@@ -14,6 +14,7 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import siteConfig from 'site.config'
 
 import ZoroProfileImg from '../public/images/zoro-profile.jpg'
 
@@ -60,7 +61,7 @@ type Props = {
   title?: string
 }
 
-const Layout = ({ children, title = 'Auvid' }: Props) => {
+const Layout = ({ children, title = siteConfig.siteName }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [user, setUser] = useState(null)
 
@@ -160,7 +161,7 @@ const Layout = ({ children, title = 'Auvid' }: Props) => {
                       <img
                         className='h-8 w-auto'
                         src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500'
-                        alt='Auvid logo'
+                        alt={`${siteConfig.siteName} logo`}
                       />
                     </div>
                     <nav className='mt-5 space-y-1 px-2'>

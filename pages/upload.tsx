@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 import { SpeakerWaveIcon, VideoCameraIcon } from '@heroicons/react/20/solid'
 import toast from 'react-hot-toast'
+import siteConfig from 'site.config'
 
 import ToastAlert from '@/components/ToastAlert'
 
@@ -71,7 +72,7 @@ const AudioUpload = () => {
   }
 
   return (
-    <Layout title='Add new note | RustleAI'>
+    <Layout title={`Add new note | ${siteConfig.siteName}`}>
       <h1 className='text-2xl font-semibold text-gray-900'>New Note:</h1>
       <FileUploadTabs tabs={tabs} handleTabChange={handleTabChange} />
       {/* render chosen uploader */}
