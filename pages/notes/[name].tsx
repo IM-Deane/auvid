@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import prettyBytes from 'pretty-bytes'
+import siteConfig from 'site.config'
 
 import Layout from '../../components/Layout'
 import { NoteFile } from '../../interfaces'
@@ -25,7 +26,7 @@ const NoteDetails = ({ fileData }: { fileData: NoteFile }) => {
     )
 
   return (
-    <Layout title='Notes | RustleAI'>
+    <Layout title={`Notes | ${siteConfig.siteName}`}>
       <div className='overflow-hidden bg-white shadow sm:rounded-lg'>
         <div className='px-4 py-5 sm:px-6'>
           <h1 className='text-lg font-medium leading-6 text-gray-900'>

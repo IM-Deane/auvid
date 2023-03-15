@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import siteConfig from 'site.config'
 
 import Alert from '../Alert'
 import LoadingButton from '../LoadingButton'
@@ -149,7 +150,7 @@ function RegistrationForm() {
         <img
           className='mx-auto h-12 w-auto'
           src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600'
-          alt='Auvid company logo'
+          alt={`${siteConfig.siteName} logo`}
         />
         <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>
           Sign up for a plan today

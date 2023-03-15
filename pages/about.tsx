@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { CheckCircleIcon } from '@heroicons/react/20/solid'
+import siteConfig from 'site.config'
 
 import Layout from '../components/Layout'
 
@@ -37,14 +38,14 @@ const features: Feature[] = [
 ]
 
 const AboutPage = () => (
-  <Layout title='About | Auvid'>
+  <Layout title={`About | ${siteConfig.siteName}`}>
     <h1 className='text-2xl font-semibold text-gray-900'>
-      Welcome to Auvid! 🔊
+      Welcome to {siteConfig.siteName}! 🔊
     </h1>
     <section className='mt-4 mb-8'>
       <p className='text-md font-light italic text-gray-900'>
         <span className='font-medium italic'>
-          Auvid (pronounced &apos;ah-vid&apos;):
+          {siteConfig.siteName} (pronounced &apos;ah-vid&apos;):
         </span>{' '}
         is a web-based service that transcribes and summarizes audio and video
         files.

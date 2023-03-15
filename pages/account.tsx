@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import siteConfig from 'site.config'
 
 import Alert from '../components/Alert'
 import Layout from '../components/Layout'
@@ -86,7 +87,7 @@ const AccountPage = ({ user }: { user: FullUser }) => {
   }
 
   return (
-    <Layout title='Account | Auvid'>
+    <Layout title={`Account | ${siteConfig.siteName}`}>
       <div className='mt-5'>
         <form
           onSubmit={updateUser}

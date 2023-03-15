@@ -7,6 +7,7 @@ import DeleteModal from '../components/DeleteModal'
 import Layout from '../components/Layout'
 import NoteGallery from '../components/Notes/NotesList'
 import useProfile from '../hooks/useProfile'
+import siteConfig from '../site.config'
 import NotesService from '../utils/services/notes-service'
 
 const NotesOverview = () => {
@@ -80,7 +81,7 @@ const NotesOverview = () => {
   if (notesError) return <div>Error: {notesError}</div>
 
   return (
-    <Layout title='Notes | RustleAI'>
+    <Layout title={`Notes | ${siteConfig.siteName}`}>
       <div className='my-4 h-10'>
         {showAlert.status && (
           <Alert

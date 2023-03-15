@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { SpeakerWaveIcon, VideoCameraIcon } from '@heroicons/react/20/solid'
+import siteConfig from 'site.config'
 
 import Alert from '../components/Alert'
 import FileDataCard from '../components/FileDataCard'
@@ -67,7 +68,7 @@ const AudioUpload = () => {
   }, [showAlert])
 
   return (
-    <Layout title='Add new note | RustleAI'>
+    <Layout title={`Add new note | ${siteConfig.siteName}`}>
       <div className='my-4 h-10'>
         {showAlert && (
           <Alert
