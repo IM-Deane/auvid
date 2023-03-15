@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import toast from 'react-hot-toast'
 import siteConfig from 'site.config'
 
-import Alert from '../components/Alert'
+import ToastAlert from '@/components/ToastAlert'
+
 import Layout from '../components/Layout'
 import { FullUser } from '../interfaces'
 import type { Database } from '../supabase/types/public'
@@ -13,11 +15,6 @@ import type { Database } from '../supabase/types/public'
 const AccountPage = ({ user }: { user: FullUser }) => {
   const supabase = useSupabaseClient<Database>()
   const [loading, setLoading] = useState(false)
-  const [alert, setAlert] = useState({
-    showing: false,
-    text: '',
-    isError: false
-  })
 
   const [email, setEmail] = useState<FullUser['email']>(user.email)
   const [profile, setProfile] = useState({
@@ -26,22 +23,6 @@ const AccountPage = ({ user }: { user: FullUser }) => {
     last_name: user.profile.last_name,
     avatar_url: user.profile.avatar_url
   })
-
-  const handleAlertClose = () => {
-    setAlert({ text: '', showing: false, isError: false })
-  }
-
-  const handleAlertOpen = (errorMsg = '') => {
-    if (errorMsg) {
-      setAlert({ text: errorMsg, showing: true, isError: true })
-      return
-    }
-    setAlert({
-      text: 'Profile successfully updated!',
-      showing: true,
-      isError: false
-    })
-  }
 
   const onProfileFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -54,7 +35,7 @@ const AccountPage = ({ user }: { user: FullUser }) => {
       setLoading(true)
       if (!user) throw new Error('No user found')
 
-      // update user email
+      // we have to update user email separately due to supabase things
       if (email !== user.email) {
         const emailRes = await supabase.auth.updateUser({ email })
         if (emailRes.error) throw emailRes.error
@@ -79,8 +60,15 @@ const AccountPage = ({ user }: { user: FullUser }) => {
 
       setProfile({ ...profileRes.data[0] })
     } catch (error) {
-      handleAlertOpen('Error updating profile data!')
-      console.log(error)
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          isOpen={visible}
+          title='Error updating profile data!'
+          message={error.message}
+          type='error'
+        />
+      ))
+      console.error(error)
     } finally {
       setLoading(false)
     }
@@ -96,15 +84,6 @@ const AccountPage = ({ user }: { user: FullUser }) => {
           <div className='space-y-8 divide-y divide-gray-200 sm:space-y-5'>
             <div className='space-y-6 sm:space-y-5'>
               <div>
-                <div className='my-3'>
-                  {alert.showing && (
-                    <Alert
-                      handleAlertDismiss={handleAlertClose}
-                      text={alert.text}
-                      isError={alert.isError}
-                    />
-                  )}
-                </div>
                 <h3 className='text-lg font-medium leading-6 text-gray-900'>
                   Profile
                 </h3>

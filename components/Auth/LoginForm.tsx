@@ -3,9 +3,11 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import toast from 'react-hot-toast'
 import siteConfig from 'site.config'
 
 import LoadingButton from '../LoadingButton'
+import ToastAlert from '../ToastAlert'
 
 interface FormData {
   email: string
@@ -91,7 +93,27 @@ function LoginForm() {
 
     setLoading(false)
 
-    if (error) throw new Error(error.message)
+    if (error) {
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          title='Wait a minute... We ran into a problem. 🤔'
+          message={error.message}
+          isOpen={visible}
+        />
+      ))
+
+      throw error
+    }
+
+    toast.custom(({ visible }) => (
+      <ToastAlert
+        type='success'
+        title='Logged in successfully'
+        message='To the dashboard! 🚀'
+        isOpen={visible}
+      />
+    ))
 
     // check for redirect url query param
     const redirectUrl = router.query.redirectedFrom as string

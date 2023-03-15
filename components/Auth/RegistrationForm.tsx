@@ -3,10 +3,11 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import toast from 'react-hot-toast'
 import siteConfig from 'site.config'
 
-import Alert from '../Alert'
 import LoadingButton from '../LoadingButton'
+import ToastAlert from '../ToastAlert'
 
 interface FormData {
   email: string
@@ -19,14 +20,6 @@ interface FormData {
 
 function RegistrationForm() {
   const [loading, setLoading] = useState<boolean>(false)
-  const [isShowingAlert, setIsShowingAlert] = useState<boolean>(false)
-  const [isError, setIsError] = useState<{
-    status: boolean
-    message: string
-  }>({
-    status: false,
-    message: ''
-  })
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
@@ -38,13 +31,6 @@ function RegistrationForm() {
 
   const supabase = useSupabaseClient()
   const router = useRouter()
-
-  const handleShowAlert = () => setIsShowingAlert(true)
-
-  const handleDismissAlert = () => {
-    setIsShowingAlert(false)
-    setIsError({ status: false, message: '' })
-  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -73,11 +59,7 @@ function RegistrationForm() {
     setFormData({ ...formData, [name]: value })
   }
 
-  /**
-   * Sign in with email and password
-   */
-  const signInWithEmail = async () => {
-    // validate form fields
+  const signUpWithEmail = async () => {
     if (!formData.email) {
       setFormData({
         ...formData,
@@ -111,15 +93,37 @@ function RegistrationForm() {
     setLoading(false)
 
     if (error) {
-      setIsError({ status: true, message: error.message })
-      handleShowAlert() // user needs to confirm email
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          title="Hmm, we're having trouble signing you up. 🤔"
+          message="Let's take another shot."
+          isOpen={visible}
+        />
+      ))
       console.error(error)
+      return
     }
 
     if (user && session) {
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          title='Welcome to the team! 🎉'
+          message="Thanks for signing up. Let's get to work!"
+          isOpen={visible}
+        />
+      ))
       router.push('/')
     } else if (!session && user) {
-      handleShowAlert() // user needs to confirm email
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          title="You're almost there!"
+          message='Check your email for the next steps. 📧'
+          isOpen={visible}
+        />
+      ))
     }
   }
 
@@ -136,17 +140,6 @@ function RegistrationForm() {
   return (
     <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-        {isShowingAlert && (
-          <Alert
-            handleAlertDismiss={handleDismissAlert}
-            isError={isError.status}
-            text={
-              isError.status
-                ? isError.message
-                : 'Login successful! Check your email for the next steps.'
-            }
-          />
-        )}
         <img
           className='mx-auto h-12 w-auto'
           src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600'
@@ -224,7 +217,7 @@ function RegistrationForm() {
                 isLoading={loading}
                 text='Sign up'
                 loadingText='Signing up...'
-                handleClick={signInWithEmail}
+                handleClick={signUpWithEmail}
               />
             </div>
           </form>

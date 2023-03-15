@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { Session, SessionContextProvider } from '@supabase/auth-helpers-react'
+import { Toaster } from 'react-hot-toast'
 
 import '../styles/globals.css'
 import type { Database } from '../supabase/types/public'
@@ -20,6 +21,7 @@ function MyApp({
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
+      <Toaster />
       <Component {...pageProps} />
     </SessionContextProvider>
   )

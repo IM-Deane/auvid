@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
 
+import { toast } from 'react-hot-toast'
+
 import { TranscriptionType } from '../../utils/enums'
 import AnalyticsService from '../../utils/services/analytics-service'
 import UploadService from '../../utils/services/upload-service'
 import LoadingButton from '../LoadingButton'
+import ToastAlert from '../ToastAlert'
 
 function VideoLinkUploader({ handleResult }) {
-  // FIXME: remove default after testing complete
   const [videoURLInput, setVideoURLInput] = useState<string>(
-    'https://www.youtube.com/watch?v=JzPfMbG1vrE'
+    process.env.NODE_ENV !== 'production'
+      ? 'https://www.youtube.com/watch?v=JzPfMbG1vrE'
+      : ''
   )
   const [videoInputError, setVideoInputError] = useState<string>('')
   const [loading, setLoading] = useState(false)
@@ -47,7 +51,6 @@ function VideoLinkUploader({ handleResult }) {
     setUploadProgress(0)
     setIsProcessingVideo(true)
 
-    // establish SSE connection
     const eventSrc = new EventSource(
       `${process.env.NEXT_PUBLIC_SSE_URL}/api/events/progress`
     )
@@ -84,6 +87,15 @@ function VideoLinkUploader({ handleResult }) {
 
     eventSrc.onerror = (event) => {
       console.log('An error occurred while attempting to connect.', event)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          isOpen={visible}
+          title='We had a little trouble with your video.'
+          message="We're not quite sure what happened but hopefully it was YoutTube's fault. 😬"
+        />
+      ))
 
       eventSrc.close()
       setTranscribeProgress(1)
@@ -124,6 +136,15 @@ function VideoLinkUploader({ handleResult }) {
       response.data['uploadType'] = 'video'
 
       handleResult(response.data)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          isOpen={visible}
+          title="We're done with your video!"
+          message='You can now view the transcript below. 🫡'
+        />
+      ))
     } catch (error) {
       if (error.response) {
         // response with status code other than 2xx
@@ -138,6 +159,15 @@ function VideoLinkUploader({ handleResult }) {
         console.log(error)
       }
       console.log(error.config)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          isOpen={visible}
+          title='We had a little trouble with your video.'
+          message={error.message}
+        />
+      ))
 
       // reset state
       setUploadProgress(0)
