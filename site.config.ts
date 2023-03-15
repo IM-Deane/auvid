@@ -4,9 +4,10 @@ const domainName = process.env.DOMAIN_NAME || 'app.auvid.io'
 
 export default siteConfig({
   siteName: 'Auvid',
+  productBrand: '#',
   domain: domainName,
   developer: 'Alchemized Software Ltd.',
-  constactEmail: 'hello@alchemizedsoftware.com', // TODO: change this to auvid email
+  contactEmail: 'hello@alchemizedsoftware.com', // TODO: change this to auvid email
 
   // site description (optional for dashboard)
   description:

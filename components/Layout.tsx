@@ -16,6 +16,7 @@ import {
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import siteConfig from 'site.config'
 
+import RobotProfileImg from '../public/images/rock-n-roll-monkey-FTfjMijq-Ws-unsplash.jpg'
 import ZoroProfileImg from '../public/images/zoro-profile.jpg'
 
 const navigation = [
@@ -61,6 +62,27 @@ type Props = {
   title?: string
 }
 
+interface User {
+  id: string
+  email: string
+  avatar_url: string
+}
+
+/**
+ * If the user has an avatar_url, use that. Otherwise, let's have some
+ * fun and show a robot image in prod. (a bit more professional) and Zoro
+ * everywhere else.
+ */
+const getAvatarSource = (user: User) => {
+  if (user?.avatar_url) {
+    return user.avatar_url
+  } else if (process.env.NODE_ENV !== 'production') {
+    return ZoroProfileImg
+  } else {
+    return RobotProfileImg
+  }
+}
+
 const Layout = ({ children, title = siteConfig.siteName }: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [user, setUser] = useState(null)
@@ -68,9 +90,6 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
   const router = useRouter()
   const supabase = useSupabaseClient()
 
-  /**
-   * Sign out user and redirect to login page
-   */
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut()
@@ -251,11 +270,7 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
                         <div className='h-10 w-10 relative'>
                           <Image
                             className='rounded-full'
-                            src={
-                              user && user.avatar_url
-                                ? user.avatar_url
-                                : ZoroProfileImg
-                            }
+                            src={getAvatarSource(user)}
                             fill
                             alt='User avatar'
                           />
@@ -289,7 +304,7 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
                 <img
                   className='h-8 w-auto'
                   src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500'
-                  alt='Your Company'
+                  alt={`${siteConfig.siteName} logo`}
                 />
               </div>
               <nav className='mt-5 flex-1 space-y-1 px-2'>
@@ -378,11 +393,7 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
                     <div className='h-10 w-10 relative overflow-hidden rounded-full'>
                       <Image
                         className='rounded-full object-cover'
-                        src={
-                          user && user.avatar_url
-                            ? user.avatar_url
-                            : ZoroProfileImg
-                        }
+                        src={getAvatarSource(user)}
                         fill
                         alt='User avatar'
                       />
