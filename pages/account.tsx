@@ -60,8 +60,8 @@ const AccountPage = ({ user }: { user: FullUser }) => {
       toast.custom(({ visible }) => (
         <ToastAlert
           isOpen={visible}
-          title='Profile update!'
-          message='Looking real good.'
+          title='Profile update successfully!'
+          message='Looking real good. 🤩'
           type='success'
         />
       ))

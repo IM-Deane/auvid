@@ -93,24 +93,24 @@ function LoginForm() {
     setLoading(false)
 
     if (error) {
-      toast.custom((t) => (
+      toast.custom(({ visible }) => (
         <ToastAlert
           type='error'
-          title='Error logging in'
+          title='Wait a minute... We ran into a problem. 🤔'
           message={error.message}
-          isOpen={t.visible}
+          isOpen={visible}
         />
       ))
 
       throw error
     }
 
-    toast.custom((t) => (
+    toast.custom(({ visible }) => (
       <ToastAlert
         type='success'
         title='Logged in successfully'
-        message='To the dashboard!'
-        isOpen={t.visible}
+        message='To the dashboard! 🚀'
+        isOpen={visible}
       />
     ))
 
