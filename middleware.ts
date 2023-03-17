@@ -33,19 +33,26 @@ export async function middleware(
   req: NextRequest,
   event: NextFetchEvent
 ): Promise<Response | undefined> {
-  const ip = req.ip ?? '127.0.0.1'
-  const { success, pending, limit, reset, remaining } = await ratelimit.limit(
-    `ratelimit_middleware_${ip}`
-  )
-  event.waitUntil(pending)
+  let res = null
 
-  // If the request is rate limited, return a 429 response.
-  const res = success
-    ? NextResponse.next()
-    : NextResponse.redirect(new URL('/api/blocked', req.url))
-  res.headers.set('X-RateLimit-Limit', limit.toString())
-  res.headers.set('X-RateLimit-Remaining', remaining.toString())
-  res.headers.set('X-RateLimit-Reset', reset.toString())
+  // we only want to rate limit in production
+  if (process.env.NODE_ENV === 'production') {
+    const ip = req.ip ?? '127.0.0.1'
+    const { success, pending, limit, reset, remaining } = await ratelimit.limit(
+      `ratelimit_middleware_${ip}`
+    )
+    event.waitUntil(pending)
+
+    // If the request is rate limited, return a 429 response.
+    res = success
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL('/api/blocked', req.url))
+    res.headers.set('X-RateLimit-Limit', limit.toString())
+    res.headers.set('X-RateLimit-Remaining', remaining.toString())
+    res.headers.set('X-RateLimit-Reset', reset.toString())
+  } else {
+    res = NextResponse.next()
+  }
 
   // now we pass response to the supabase client further header modifications
   const supabase = createMiddlewareSupabaseClient({ req, res })
