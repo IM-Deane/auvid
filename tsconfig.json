@@ -19,11 +19,14 @@
     "typeRoots": ["./node_modules/@types"],
     "paths": {
       "@/components/*": ["components/*"],
+      "@/context/*": ["context/*"],
       "@/tmp/*": ["tmp/*"],
       "@/pages/*": ["pages/*"],
       "@/hooks/*": ["hooks/*"],
       "@/utils/*": ["utils/*"],
-      "@/styles/*": ["styles/*"]
+      "@/styles/*": ["styles/*"],
+      "@/supabase/*": ["supabase/*"],
+      "@/types/*": ["types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
