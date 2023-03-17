@@ -5,33 +5,14 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline'
 
-import { NestedTab, siteConfig } from './types/site-config'
+import { NavTab, siteConfig } from './types/site-config'
 
 const domainName = process.env.DOMAIN_NAME || 'app.auvid.io'
 
-const BILLING_HREF = '/account/billing'
-
-const billing: NestedTab = {
+const billing: NavTab = {
   name: 'Billing',
   current: false,
-  href: BILLING_HREF,
-  children: {
-    usage: {
-      name: 'Usage',
-      href: `${BILLING_HREF}/usage`,
-      current: false
-    },
-    invoices: {
-      name: 'Invoices',
-      href: `${BILLING_HREF}/invoices`,
-      current: false
-    },
-    subscription: {
-      name: 'Subscription',
-      href: `${BILLING_HREF}/subscription`,
-      current: false
-    }
-  }
+  href: '/account/billing'
 }
 
 export default siteConfig({
@@ -49,12 +30,6 @@ export default siteConfig({
   mainNavTabs: [
     { name: 'Dashboard', icon: HomeIcon, current: true, href: '/' },
     {
-      name: 'About',
-      icon: BookOpenIcon,
-      current: false,
-      href: '/about'
-    },
-    {
       name: 'Notes',
       icon: DocumentDuplicateIcon,
       current: false,
@@ -67,7 +42,16 @@ export default siteConfig({
       name: 'Account',
       icon: UserCircleIcon,
       current: false,
-      children: [{ name: 'Your Profile', href: '/account' }, { ...billing }]
+      children: [
+        { name: 'Your Profile', href: '/account' },
+        billing,
+        {
+          name: 'About Avuid',
+          icon: BookOpenIcon,
+          current: false,
+          href: '/about'
+        }
+      ]
     }
   ],
   accountNavTabs: [
