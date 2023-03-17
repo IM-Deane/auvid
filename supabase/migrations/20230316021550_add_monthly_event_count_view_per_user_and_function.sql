@@ -12,14 +12,14 @@ CREATE OR REPLACE FUNCTION public.get_current_month_event_count(profile_id uuid)
  LANGUAGE plpgsql
 AS $function$
 DECLARE
-    event_count INTEGER;
+    event_count_to_return INTEGER;
 BEGIN
     SELECT event_count
-    INTO event_count
+    INTO event_count_to_return
     FROM events_per_user_current_month
-    WHERE profile_id = get_current_month_event_count.profile_id;
+    WHERE events_per_user_current_month.profile_id = get_current_month_event_count.profile_id;
     
-    RETURN event_count;
+    RETURN event_count_to_return;
 END;
 $function$
 ;
