@@ -1,4 +1,4 @@
-import { NavTab, siteConfig } from '@/types/site-config'
+import { siteConfig } from '@/types/site-config'
 import {
   BookOpenIcon,
   DocumentDuplicateIcon,
@@ -7,12 +7,6 @@ import {
 } from '@heroicons/react/24/outline'
 
 const domainName = process.env.DOMAIN_NAME || 'app.auvid.io'
-
-const billing: NavTab = {
-  name: 'Billing',
-  current: false,
-  href: '/account/billing'
-}
 
 export default siteConfig({
   siteName: 'Auvid',
@@ -43,7 +37,7 @@ export default siteConfig({
       current: false,
       children: [
         { name: 'Your Profile', href: '/account' },
-        billing,
+        { name: 'Subscription', href: '/account/subscription' },
         {
           name: 'About Avuid',
           icon: BookOpenIcon,
@@ -55,16 +49,26 @@ export default siteConfig({
   ],
   accountNavTabs: [
     { name: 'Your Profile', href: '/account' },
-    billing,
-    { name: 'Sign out' }
-  ],
-  settingsNavTabs: [
-    { name: 'Account', href: '/account', current: true },
     {
       name: 'Subscription',
       href: '/account/subscription',
       current: false
     },
-    { name: 'Billing', href: '/account/billing', current: false }
+
+    { name: 'Sign out' }
+  ],
+  settingsNavTabs: [
+    { name: 'Account', href: '/account', current: true },
+    { name: 'Usage', href: '/account/usage', current: false },
+    {
+      name: 'Subscription',
+      href: '/account/subscription',
+      current: false
+    },
+    {
+      name: 'Billing',
+      current: false,
+      href: '/account/billing'
+    }
   ]
 })

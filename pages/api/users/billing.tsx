@@ -10,14 +10,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const supabase = createServerSupabaseClient<Database>({ req, res })
-    const {
-      data: { user }
-    } = await supabase.auth.getUser()
 
-    const { data, error } = await supabase.rpc(
-      'get_current_month_event_count',
-      { profile_id: user.id }
-    )
+    const { data, error } = await supabase.rpc('get_current_month_event_count')
 
     if (error) throw error
 

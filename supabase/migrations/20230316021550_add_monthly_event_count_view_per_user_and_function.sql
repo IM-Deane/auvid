@@ -7,7 +7,7 @@ create or replace view "public"."events_per_user_current_month" as  SELECT event
   GROUP BY events.profile_id;
 
 
-CREATE OR REPLACE FUNCTION public.get_current_month_event_count(profile_id uuid)
+CREATE OR REPLACE FUNCTION public.get_current_month_event_count()
  RETURNS integer
  LANGUAGE plpgsql
 AS $function$
@@ -17,7 +17,7 @@ BEGIN
     SELECT event_count
     INTO event_count_to_return
     FROM events_per_user_current_month
-    WHERE events_per_user_current_month.profile_id = get_current_month_event_count.profile_id;
+    WHERE events_per_user_current_month.profile_id = auth.uid();
     
     RETURN event_count_to_return;
 END;
