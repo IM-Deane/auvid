@@ -1,11 +1,10 @@
+import { NavTab, siteConfig } from '@/types/site-config'
 import {
   BookOpenIcon,
   DocumentDuplicateIcon,
   HomeIcon,
   UserCircleIcon
 } from '@heroicons/react/24/outline'
-
-import { NavTab, siteConfig } from './types/site-config'
 
 const domainName = process.env.DOMAIN_NAME || 'app.auvid.io'
 
