@@ -10,7 +10,8 @@ const domainName = process.env.DOMAIN_NAME || 'app.auvid.io'
 
 export default siteConfig({
   siteName: 'Auvid',
-  productBrand: '#',
+  productBrand:
+    'https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600',
   domain: domainName,
   developer: 'Alchemized Software Ltd.',
   contactEmail: 'hello@alchemizedsoftware.com', // TODO: change this to auvid email
