@@ -1,17 +1,24 @@
-import { GetServerSidePropsContext } from 'next'
-import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 
-import { NoteFile } from '@/supabase/types/index'
+import useInternalAPI from '@/hooks/useInternalAPI'
 import AnalyticsService from '@/utils/services/analytics-service'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import prettyBytes from 'pretty-bytes'
 import siteConfig from 'site.config'
 
 import Layout from '@/components/Layout'
+import LoadingSkeleton from '@/components/cards/LoadingSkeleton'
 
-const NoteDetails = ({ fileData }: { fileData: NoteFile }) => {
-  const [file] = useState<NoteFile>(fileData)
+const NoteDetails = () => {
+  const [loading, setLoading] = useState<boolean>(true)
   const [fileToDownload] = useState<any>('')
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!router.isReady) return
+    setLoading(false)
+  }, [router.isReady])
 
   /**
    * This isn't perfect as we can't tell if the user actually downloaded the file.
@@ -19,11 +26,21 @@ const NoteDetails = ({ fileData }: { fileData: NoteFile }) => {
    * @param filename name of the current file
    * @returns
    */
-  const handleFileDownloadEvent = async (filename) =>
+  const handleFileDownloadEvent = async (filename) => {
     await AnalyticsService.createNotesDownloadEvent(
       filename,
       file['hasSummary']
     )
+  }
+
+  const {
+    data: file,
+    error,
+    isLoading
+  } = useInternalAPI(!loading ? `/api/notes/${router.query.name}` : '')
+
+  if (!file || isLoading) return <LoadingSkeleton count={1} large />
+  if (error) return error
 
   return (
     <Layout title={`Notes | ${siteConfig.siteName}`}>
@@ -86,55 +103,6 @@ const NoteDetails = ({ fileData }: { fileData: NoteFile }) => {
       </div>
     </Layout>
   )
-}
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  // Create authenticated Supabase Client
-  const supabase = createServerSupabaseClient(ctx)
-  // Check if we have a session
-  const {
-    data: { session }
-  } = await supabase.auth.getSession()
-
-  if (!session)
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false
-      }
-    }
-
-  const userID = session.user.id
-  // get file matching ID
-  const { data, error } = await supabase.storage.from('notes').list(userID, {
-    search: ctx.params.name.toString()
-  })
-
-  if (error) throw new Error(error.message)
-  if (!data) throw new Error('File not found')
-
-  // download file to get it's inner contents
-  const downloadResponse = await supabase.storage
-    .from('notes')
-    .download(`${userID}/${ctx.params.name.toString()}`)
-
-  if (downloadResponse.error) throw new Error('Error downloading file')
-  if (!downloadResponse.data) throw new Error('File not found')
-
-  // create new object with response data and file contents
-  const fileData = { ...data[0] }
-  fileData['contents'] = await downloadResponse.data.text()
-
-  // The method returns true for the first instance of "Summary" found.
-  // Because we use it as a section header before any text, only the document's title
-  // throws a false positive
-  fileData['hasSummary'] = fileData['contents'].includes('Summary:')
-
-  return {
-    props: {
-      fileData
-    }
-  }
 }
 
 export default NoteDetails
