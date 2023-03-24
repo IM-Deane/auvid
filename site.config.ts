@@ -38,7 +38,8 @@ export default siteConfig({
       current: false,
       children: [
         { name: 'Your Profile', href: '/account' },
-        { name: 'Subscription', href: '/account/subscription' },
+        // TODO: hide until we have membership support
+        // { name: 'Subscription', href: '/account/subscription' },
         {
           name: 'About Avuid',
           icon: BookOpenIcon,
@@ -50,26 +51,28 @@ export default siteConfig({
   ],
   accountNavTabs: [
     { name: 'Your Profile', href: '/account' },
-    {
-      name: 'Subscription',
-      href: '/account/subscription',
-      current: false
-    },
+    // TODO: hide until we have membership support
+    // {
+    //   name: 'Subscription',
+    //   href: '/account/subscription',
+    //   current: false
+    // },
 
     { name: 'Sign out' }
   ],
   settingsNavTabs: [
     { name: 'Account', href: '/account', current: true },
-    { name: 'Usage', href: '/account/usage', current: false },
-    {
-      name: 'Subscription',
-      href: '/account/subscription',
-      current: false
-    },
-    {
-      name: 'Billing',
-      current: false,
-      href: '/account/billing'
-    }
+    { name: 'Usage', href: '/account/usage', current: false }
+    // TODO: hide these until we have membership support
+    // {
+    //   name: 'Subscription',
+    //   href: '/account/subscription',
+    //   current: false
+    // },
+    // {
+    //   name: 'Billing',
+    //   current: false,
+    //   href: '/account/billing'
+    // }
   ]
 })
