@@ -22,7 +22,7 @@ test.describe('Authentication', () => {
     await page.getByPlaceholder('tony@starkindustries.mu').press('Tab')
     await page.getByLabel('Password').fill(process.env.VALID_PASSWORD)
     await page.getByRole('button', { name: 'Sign in' }).click()
-    await expect.soft(page.getByText('Invalid login credentials')).toBeVisible()
+    await expect(page.getByText('Logged in successfully')).toBeVisible()
   })
 
   test('user can register using the signup form', async ({ page }) => {
