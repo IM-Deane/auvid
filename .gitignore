@@ -43,3 +43,6 @@ next-env.d.ts
 
 # static files
 /public/uploads
+/test-results/
+/playwright-report/
+/playwright/.cache/
