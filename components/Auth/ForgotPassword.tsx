@@ -59,7 +59,7 @@ function ForgotPasswordForm() {
     const { error } = await supabase.auth.resetPasswordForEmail(
       formData.email,
       {
-        redirectTo: `${host}/auth/forgot-password`
+        redirectTo: `${host}/auth/reset-password`
       }
     )
 
@@ -82,7 +82,7 @@ function ForgotPasswordForm() {
       <ToastAlert
         type='success'
         title='A reset request sent has been!'
-        message='Check your email for further instructions'
+        message='Check your email (including your spam folder) for further instructions'
         isOpen={visible}
       />
     ))
