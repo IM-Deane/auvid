@@ -16,11 +16,13 @@ const NotesOverview = () => {
   const [showModal, setShowModal] = useState(false)
 
   const supabase = useSupabaseClient()
-  const { profile } = useProfile()
+  const { userWithProfile } = useProfile()
 
   const handleDeleteFile = async (filename) => {
     try {
-      await supabase.storage.from('notes').remove([`${profile.id}/${filename}`])
+      await supabase.storage
+        .from('notes')
+        .remove([`${userWithProfile.id}/${filename}`])
 
       refreshNotes()
 
@@ -57,7 +59,9 @@ const NotesOverview = () => {
 
   const handleClearAllFiles = async () => {
     try {
-      const filesToDelete = notes.map((file) => `${profile.id}/${file.name}`)
+      const filesToDelete = notes.map(
+        (file) => `${userWithProfile.id}/${file.name}`
+      )
 
       await supabase.storage.from('notes').remove(filesToDelete)
       refreshNotes()

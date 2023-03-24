@@ -4,17 +4,14 @@ import axiosFetcher from '../utils/swr'
 
 /**
  * Fetches current user's profile data.
- * @returns {object} `profile`, `isLoading`, `isError`
  */
 export function useProfile() {
-  const fetcher = async (url) => await axiosFetcher(url)
-
-  const { data, error, isLoading } = useSWR('/api/users/profiles', fetcher)
+  const { data, error, isLoading } = useSWR('/api/users/profile', axiosFetcher)
 
   return {
-    profile: data,
+    userWithProfile: data,
     isLoading,
-    isError: error
+    error
   }
 }
 
