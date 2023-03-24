@@ -71,7 +71,16 @@ const NoteDetails = () => {
   } = useInternalAPI(!loading ? `/api/notes/${router.query.name}` : '')
 
   if (error) return error
-  if (!file || isLoading) return <LoadingSkeleton count={1} large />
+  if (!file || isLoading)
+    return (
+      <Layout title={`Notes | ${siteConfig.siteName}`}>
+        <div className='overflow-hidden bg-white shadow sm:rounded-lg'>
+          <div className='px-4 py-5 sm:px-6'>
+            <LoadingSkeleton count={1} large />
+          </div>
+        </div>
+      </Layout>
+    )
 
   return (
     <Layout title={`Notes | ${siteConfig.siteName}`}>
