@@ -2,17 +2,22 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import useInternalAPI from '@/hooks/useInternalAPI'
+import type { Database } from '@/supabase/types/public'
 import AnalyticsService from '@/utils/services/analytics-service'
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react'
 import prettyBytes from 'pretty-bytes'
 import siteConfig from 'site.config'
 
 import Layout from '@/components/Layout'
+import LoadingButton from '@/components/LoadingButton'
 import LoadingSkeleton from '@/components/cards/LoadingSkeleton'
 
 const NoteDetails = () => {
   const [loading, setLoading] = useState<boolean>(true)
-  const [fileToDownload] = useState<any>('')
+  const [isDownloading, setIsDownloading] = useState<boolean>(false)
 
+  const supabase = useSupabaseClient<Database>()
+  const user = useUser()
   const router = useRouter()
 
   useEffect(() => {
@@ -26,21 +31,49 @@ const NoteDetails = () => {
    * @param filename name of the current file
    * @returns
    */
-  const handleFileDownloadEvent = async (filename) => {
+  const handleFileDownloadEvent = async (filename) =>
     await AnalyticsService.createNotesDownloadEvent(
       filename,
       file['hasSummary']
     )
+
+  const downloadFileLocally = async () => {
+    setIsDownloading(true)
+    try {
+      const { data, error } = await supabase.storage
+        .from('notes')
+        .download(`${user.id}/${file.name}`)
+
+      if (error) throw error
+
+      const noteFile = new File([data], file.name, {
+        type: data.type
+      })
+
+      // create anchor link to simulate a download
+      const element = document.createElement('a')
+      element.href = URL.createObjectURL(noteFile)
+      element.download = file.name
+      document.body.appendChild(element)
+      element.click() // Required for this to work in FireFox
+      await handleFileDownloadEvent(file.name)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsDownloading(false)
+    }
   }
 
   const {
     data: file,
     error,
     isLoading
-  } = useInternalAPI(!loading ? `/api/notes/${router.query.name}` : '')
+  } = useInternalAPI(!loading ? `/api/notes/${router.query.name}` : '', {
+    refreshInterval: 10000
+  })
 
-  if (!file || isLoading) return <LoadingSkeleton count={1} large />
   if (error) return error
+  if (!file || isLoading) return <LoadingSkeleton count={1} large />
 
   return (
     <Layout title={`Notes | ${siteConfig.siteName}`}>
@@ -60,7 +93,7 @@ const NoteDetails = () => {
             <div className='sm:col-span-1'>
               <dt className='text-sm font-medium text-gray-500'>Created at</dt>
               <dd className='mt-1 text-sm text-gray-900'>
-                {new Date(file.created_at).toDateString()}
+                {new Date(file.created_at).toLocaleDateString()}
               </dd>
             </div>
             <div className='sm:col-span-1'>
@@ -68,7 +101,7 @@ const NoteDetails = () => {
                 Last accessed
               </dt>
               <dd className='mt-1 text-sm text-gray-900'>
-                {new Date(file.last_accessed_at).toDateString()}
+                {new Date(file.last_accessed_at).toLocaleDateString()}
               </dd>
             </div>
             <div className='sm:col-span-1'>
@@ -88,14 +121,13 @@ const NoteDetails = () => {
             </div>
             <div className='sm:col-span-2'>
               <dd className='float-right mt-1 text-sm text-gray-900'>
-                <a
-                  onClick={() => handleFileDownloadEvent(file.name)}
-                  href={fileToDownload}
-                  download={file.name}
-                  className='inline-flex cursor-pointer items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-                >
-                  Download File
-                </a>
+                <LoadingButton
+                  handleClick={downloadFileLocally}
+                  isLoading={isDownloading}
+                  isDownload={true}
+                  text='Download File'
+                  loadingText='Downloading file...'
+                />
               </dd>
             </div>
           </dl>

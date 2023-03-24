@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import fs from 'fs'
+import path from 'path'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -25,10 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const assembledFiletext = assembleFileText(documentTitle, summary, fullText)
     const filenameWithExt = filename.replace(/[^a-z0-9.]/gi, '-').toLowerCase()
-    const tempFilePath =
-      process.env.NODE_ENV === 'production'
-        ? `/tmp/${filenameWithExt}`
-        : `./tmp/${filenameWithExt}`
+    const tempFilePath = `${path.join(process.cwd(), 'tmp')}/${filenameWithExt}`
 
     const writeStream = fs.createWriteStream(tempFilePath, { flags: 'a' })
     writeStream.write(assembledFiletext, (err) => {

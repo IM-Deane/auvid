@@ -43,6 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.status(200).json(fileData)
   } catch (error: any) {
+    console.error(error)
     res.status(500).json({ message: error.message })
   }
 }
