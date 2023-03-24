@@ -114,9 +114,18 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      events_per_user_current_month: {
+        Row: {
+          event_count: number | null
+          profile_id: string | null
+        }
+      }
     }
     Functions: {
+      get_current_month_event_count: {
+        Args: { profile_id: string }
+        Returns: number
+      }
       handle_new_note_event: {
         Args: {
           event_description: string

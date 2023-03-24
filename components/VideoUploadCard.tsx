@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import { File } from '@/supabase/types/index'
 import toast from 'react-hot-toast'
 
-import { File } from '../interfaces'
 import { trimEdgesAndCapitalizeFirstLetter } from '../utils'
 import { fileTypes } from '../utils/enums'
 import AnalyticsService from '../utils/services/analytics-service'

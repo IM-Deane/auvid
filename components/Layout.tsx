@@ -4,58 +4,18 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { Fragment, ReactNode, useEffect, useState } from 'react'
 
+import { classNames } from '@/utils/index'
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
-import {
-  Bars3Icon,
-  BookOpenIcon,
-  DocumentDuplicateIcon,
-  HomeIcon,
-  UserCircleIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import siteConfig from 'site.config'
 
 import RobotProfileImg from '../public/images/rock-n-roll-monkey-FTfjMijq-Ws-unsplash.jpg'
 import ZoroProfileImg from '../public/images/zoro-profile.jpg'
 
-const navigation = [
-  { name: 'Dashboard', icon: HomeIcon, current: true, href: '/' },
-  {
-    name: 'About',
-    icon: BookOpenIcon,
-    current: false,
-    href: '/about'
-  },
-  {
-    name: 'Notes',
-    icon: DocumentDuplicateIcon,
-    current: false,
-    children: [
-      { name: 'Overview', href: '/notes' },
-      { name: 'Add Note', href: '/upload' }
-    ]
-  },
-  {
-    name: 'Account',
-    icon: UserCircleIcon,
-    current: false,
-    children: [
-      { name: 'Your Profile', href: '/account' },
-      { name: 'Billing', href: '#' }
-    ]
-  }
-]
+const navigation = siteConfig.mainNavTabs
 
-const accountNavigation = [
-  { name: 'Your Profile', href: '/account' },
-  { name: 'Billing', href: '#' },
-  { name: 'Sign out' }
-]
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+const accountNavigation = siteConfig.accountNavTabs
 
 type Props = {
   children?: ReactNode

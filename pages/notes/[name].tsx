@@ -1,13 +1,13 @@
 import { GetServerSidePropsContext } from 'next'
 import React, { useState } from 'react'
 
+import { NoteFile } from '@/supabase/types/index'
+import AnalyticsService from '@/utils/services/analytics-service'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import prettyBytes from 'pretty-bytes'
 import siteConfig from 'site.config'
 
-import Layout from '../../components/Layout'
-import { NoteFile } from '../../interfaces'
-import AnalyticsService from '../../utils/services/analytics-service'
+import Layout from '@/components/Layout'
 
 const NoteDetails = ({ fileData }: { fileData: NoteFile }) => {
   const [file] = useState<NoteFile>(fileData)

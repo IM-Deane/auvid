@@ -1,6 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
 
 import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+/**
+ * Rate limit SDK example.
+ * @see https://github.com/upstash/ratelimit/blob/main/examples/nextjs/middleware.ts
+ */
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.cachedFixedWindow(10, '10 s'),
+  timeout: 5000, // 5 seconds
+  ephemeralCache: new Map(),
+  analytics: true
+})
 
 export const config = {
   matcher: [
@@ -15,10 +29,32 @@ export const config = {
   ]
 }
 
-export async function middleware(req: NextRequest) {
-  // We need to create a response and hand it to the supabase client to be able to modify the response headers.
-  const res = NextResponse.next()
+export async function middleware(
+  req: NextRequest,
+  event: NextFetchEvent
+): Promise<Response | undefined> {
+  let res = null
 
+  // we only want to rate limit in production
+  if (process.env.NODE_ENV === 'production') {
+    const ip = req.ip ?? '127.0.0.1'
+    const { success, pending, limit, reset, remaining } = await ratelimit.limit(
+      `ratelimit_middleware_${ip}`
+    )
+    event.waitUntil(pending)
+
+    // If the request is rate limited, return a 429 response.
+    res = success
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL('/api/blocked', req.url))
+    res.headers.set('X-RateLimit-Limit', limit.toString())
+    res.headers.set('X-RateLimit-Remaining', remaining.toString())
+    res.headers.set('X-RateLimit-Reset', reset.toString())
+  } else {
+    res = NextResponse.next()
+  }
+
+  // now we pass response to the supabase client further header modifications
   const supabase = createMiddlewareSupabaseClient({ req, res })
 
   const {
