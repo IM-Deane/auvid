@@ -1,4 +1,4 @@
-import { File } from '../interfaces'
+import { File } from '@/supabase/types/index'
 
 export const fileTypes: File[] = [
   { id: 0, name: 'TXT', ext: '.txt' },

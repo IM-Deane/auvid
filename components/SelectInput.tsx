@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react'
 
+import { File } from '@/supabase/types/index'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-import { File } from '../interfaces'
 import { fileTypes } from '../utils/enums'
 
 function classNames(...classes) {
