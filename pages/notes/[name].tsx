@@ -83,7 +83,7 @@ const NoteDetails = () => {
     )
 
   return (
-    <Layout title={`Notes | ${siteConfig.siteName}`}>
+    <Layout title={`${file.name} | ${siteConfig.siteName}`}>
       <div className='overflow-hidden bg-white shadow sm:rounded-lg'>
         <div className='px-4 py-5 sm:px-6'>
           <h1 className='text-lg font-medium leading-6 text-gray-900'>
