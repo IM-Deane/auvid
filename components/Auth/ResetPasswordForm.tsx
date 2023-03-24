@@ -56,7 +56,7 @@ function ResetPasswordForm() {
     const { data, error } = await supabase.auth.updateUser({
       password: formData.password
     })
-    console.log(data)
+    console.log('reset password data', data)
 
     if (error) {
       toast.custom(({ visible }) => (

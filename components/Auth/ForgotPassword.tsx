@@ -15,11 +15,7 @@ interface FormData {
   }
 }
 
-interface RestPasswordFormProps {
-  setEmailResponse: (responseData: any) => void
-}
-
-function ForgotPasswordForm({ setEmailResponse }: RestPasswordFormProps) {
+function ForgotPasswordForm() {
   const [loading, setLoading] = useState<boolean>(false)
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -60,6 +56,7 @@ function ForgotPasswordForm({ setEmailResponse }: RestPasswordFormProps) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(
       formData.email
     )
+    console.log('forgot password response', data)
 
     setLoading(false)
 
@@ -75,8 +72,6 @@ function ForgotPasswordForm({ setEmailResponse }: RestPasswordFormProps) {
 
       throw error
     }
-
-    setEmailResponse(data)
 
     toast.custom(({ visible }) => (
       <ToastAlert
