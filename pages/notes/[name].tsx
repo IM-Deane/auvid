@@ -68,9 +68,7 @@ const NoteDetails = () => {
     data: file,
     error,
     isLoading
-  } = useInternalAPI(!loading ? `/api/notes/${router.query.name}` : '', {
-    refreshInterval: 10000
-  })
+  } = useInternalAPI(!loading ? `/api/notes/${router.query.name}` : '')
 
   if (error) return error
   if (!file || isLoading) return <LoadingSkeleton count={1} large />
