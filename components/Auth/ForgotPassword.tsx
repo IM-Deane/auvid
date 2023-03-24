@@ -52,14 +52,16 @@ function ForgotPasswordForm() {
     }
 
     setLoading(true)
+    const host = window.location.host.includes('localhost')
+      ? 'http://localhost'
+      : `https://${window.location.host}`
 
-    const { data, error } = await supabase.auth.resetPasswordForEmail(
+    const { error } = await supabase.auth.resetPasswordForEmail(
       formData.email,
       {
-        redirectTo: '/auth/forgot-password'
+        redirectTo: `${host}/auth/forgot-password`
       }
     )
-    console.log('forgot password response', data)
 
     setLoading(false)
 
@@ -79,7 +81,7 @@ function ForgotPasswordForm() {
     toast.custom(({ visible }) => (
       <ToastAlert
         type='success'
-        title='Email sent has been!'
+        title='A reset request sent has been!'
         message='Check your email for further instructions'
         isOpen={visible}
       />

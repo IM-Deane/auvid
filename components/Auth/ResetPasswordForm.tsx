@@ -74,8 +74,8 @@ function ResetPasswordForm() {
     toast.custom(({ visible }) => (
       <ToastAlert
         type='success'
-        title='Password Updated!'
-        message='Your password has been updated. Now back to business!'
+        title='Update successful!'
+        message='Your password has been updated. Now back to business. 💪🏾'
         isOpen={visible}
       />
     ))
