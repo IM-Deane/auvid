@@ -5,9 +5,9 @@ function LoadingSkeleton({ count, large = false }) {
 
   return (
     <div className='mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
-      {cardList.map((i) => (
+      {cardList.map((_, index) => (
         <div
-          key={i + Date.now().toString()}
+          key={index + Date.now().toString()}
           className='relative before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-blue-300/10 before:to-transparent isolate overflow-hidden shadow-xl shadow-black/5 before:border-t before:border-blue-400/10'
         >
           <div className='space-y-5 rounded-2xl bg-blue-300 p-4'>

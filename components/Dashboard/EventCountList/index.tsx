@@ -36,7 +36,7 @@ function EventCountList() {
             key={key + Date.now().toLocaleString()}
             className='relative overflow-hidden rounded-lg bg-white px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6'
           >
-            <dt>
+            <div>
               <div className='absolute rounded-md bg-blue-500 p-3'>
                 <EnvelopeOpenIcon
                   className='h-6 w-6 text-white'
@@ -46,8 +46,8 @@ function EventCountList() {
               <p className='ml-16 truncate text-sm font-medium text-gray-500'>
                 Total {key.charAt(0).toUpperCase() + key.slice(1)}
               </p>
-            </dt>
-            <dd className='ml-16 flex items-baseline pb-6 sm:pb-7'>
+            </div>
+            <div className='ml-16 flex items-baseline pb-6 sm:pb-7'>
               <p className='text-2xl font-semibold text-gray-900'>{value}</p>
               {value != 0 && (
                 <p
@@ -80,7 +80,7 @@ function EventCountList() {
                   <div className='text-sm'>
                     <Link
                       href='/notes'
-                      className='font-medium text-blue-600 hover:text-blue-500'
+                      className='font-medium text-blue-600 hover:text-blue-500 mt-1'
                     >
                       {' '}
                       View all
@@ -89,7 +89,7 @@ function EventCountList() {
                   </div>
                 )}
               </div>
-            </dd>
+            </div>
           </div>
         ))}
     </dt>
