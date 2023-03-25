@@ -6,12 +6,13 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline'
 
+import auvidLogo from './public/auvid.svg'
+
 const domainName = process.env.DOMAIN_NAME || 'app.auvid.io'
 
 export default siteConfig({
   siteName: 'Auvid',
-  productBrand:
-    'https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600',
+  productBrand: auvidLogo,
   domain: domainName,
   developer: 'Alchemized Software Ltd.',
   contactEmail: 'hello@alchemizedsoftware.com', // TODO: change this to auvid email
