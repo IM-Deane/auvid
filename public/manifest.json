@@ -2,6 +2,7 @@
   "name": "Auvid",
   "short_name": "Auvid",
   "description": "A web-based platform that uses AI to summarize audio and video files.",
+  "start_url": "./",
   "icons": [
     {
       "src": "/favicon/favicon.ico",

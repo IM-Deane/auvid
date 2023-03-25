@@ -22,7 +22,11 @@ export default function Document() {
           sizes='16x16'
           href='/favicon/favicon-16x16.png'
         />
-        <link rel='manifest' href='/manifest.json' />
+        <link
+          rel='manifest'
+          href='/manifest.json'
+          crossOrigin='use-credentials'
+        />
         <link
           rel='mask-icon'
           href='/favicon/safari-pinned-tab.svg'
