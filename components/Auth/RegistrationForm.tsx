@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
@@ -135,16 +136,18 @@ function RegistrationForm() {
   const getInputClasses = (field) =>
     formData.error[field]
       ? 'block w-full appearance-none rounded-md border border-red-300 px-3 py-2 placeholder-red-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm'
-      : 'block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+      : 'block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm'
 
   return (
     <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-        <img
-          className='mx-auto h-12 w-auto'
-          src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600'
-          alt={`${siteConfig.siteName} logo`}
-        />
+        <div className='relative mx-auto h-12 w-12'>
+          <Image
+            src={siteConfig.productBrand}
+            alt={`${siteConfig.siteName} logo`}
+            fill
+          />
+        </div>
         <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>
           Sign up for a plan today
         </h2>
@@ -152,7 +155,7 @@ function RegistrationForm() {
           Or{' '}
           <Link
             href='/auth/login'
-            className='font-medium text-indigo-600 hover:text-indigo-500'
+            className='font-medium text-blue-600 hover:text-blue-500'
           >
             Login into your account
           </Link>

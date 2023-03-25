@@ -21,7 +21,7 @@ function LoadingButton({
       value={isDownload ? 'download' : ''}
       onClick={handleClick}
       disabled={isLoading}
-      className='inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+      className='inline-flex items-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
     >
       {isLoading && (
         <svg className='h-4 w-4 animate-spin' viewBox='3 3 18 18'>

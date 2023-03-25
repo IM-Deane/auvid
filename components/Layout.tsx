@@ -137,11 +137,13 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
                   </Transition.Child>
                   <div className='h-0 flex-1 overflow-y-auto pt-5 pb-4'>
                     <div className='flex flex-shrink-0 items-center px-4'>
-                      <img
-                        className='h-8 w-auto'
-                        src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500'
-                        alt={`${siteConfig.siteName} logo`}
-                      />
+                      <div className='relative h-8 w-8'>
+                        <Image
+                          src={siteConfig.productBrand}
+                          alt={`${siteConfig.siteName} logo`}
+                          fill
+                        />
+                      </div>
                     </div>
                     <nav className='mt-5 space-y-1 px-2'>
                       {navigation.map((item) =>
@@ -181,7 +183,7 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
                                     item.current
                                       ? 'bg-gray-900 text-white'
                                       : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                    'group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
+                                    'group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
                                   )}
                                 >
                                   <item.icon
@@ -261,11 +263,13 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
           <div className='flex min-h-0 flex-1 flex-col bg-gray-800'>
             <div className='flex flex-1 flex-col overflow-y-auto pt-5 pb-4'>
               <div className='flex flex-shrink-0 items-center px-4'>
-                <img
-                  className='h-8 w-auto'
-                  src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500'
-                  alt={`${siteConfig.siteName} logo`}
-                />
+                <div className='relative h-12 w-12'>
+                  <Image
+                    src={siteConfig.productBrand}
+                    alt={`${siteConfig.siteName} logo`}
+                    fill
+                  />
+                </div>
               </div>
               <nav className='mt-5 flex-1 space-y-1 px-2'>
                 {navigation.map((item) =>
@@ -301,7 +305,7 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
                               item.current
                                 ? 'bg-gray-900 text-white'
                                 : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                              'group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
+                              'group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
                             )}
                           >
                             <item.icon
@@ -347,7 +351,7 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
             <div className='flex flex-shrink-0 bg-gray-700 p-4'>
               {/* Profile dropdown */}
               <Menu as='div'>
-                <Menu.Button className='group block w-full flex-shrink-0 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
+                <Menu.Button className='group block w-full flex-shrink-0 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'>
                   <span className='sr-only'>Open user menu</span>
                   <div className='flex items-center'>
                     <div className='h-10 w-10 relative overflow-hidden rounded-full'>
@@ -417,7 +421,7 @@ const Layout = ({ children, title = siteConfig.siteName }: Props) => {
           <div className='sticky top-0 z-10 bg-gray-100 pl-1 pt-1 sm:pl-3 sm:pt-3 md:hidden'>
             <button
               type='button'
-              className='-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500'
+              className='-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500'
               onClick={() => setSidebarOpen(true)}
             >
               <span className='sr-only'>Open sidebar</span>

@@ -53,7 +53,7 @@ const AboutPage = () => (
     </section>
 
     <section className='my-4'>
-      <header className='border-b border-indigo-300 pb-3 mb-7'>
+      <header className='border-b border-blue-300 pb-3 mb-7'>
         <h2 className='text-lg font-medium leading-6 text-gray-900'>
           Features:
         </h2>
@@ -64,7 +64,7 @@ const AboutPage = () => (
             <div key={feature.id} className='flex items-center h-full'>
               <div className='flex-none w-15'>
                 <CheckCircleIcon
-                  className='ml-3 mr-1.5 h-5 w-5 flex-shrink-0 text-indigo-400'
+                  className='ml-3 mr-1.5 h-5 w-5 flex-shrink-0 text-blue-400'
                   aria-hidden='true'
                 />
               </div>
@@ -72,7 +72,7 @@ const AboutPage = () => (
                 <div className='flex items-center px-4 py-4 sm:px-6'>
                   <div className='flex items-center min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4'>
                     <div>
-                      <p className='truncate text-sm font-medium text-indigo-600'>
+                      <p className='truncate text-sm font-medium text-blue-600'>
                         {feature.name}
                       </p>
                     </div>

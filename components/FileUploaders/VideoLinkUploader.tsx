@@ -195,7 +195,7 @@ function VideoLinkUploader({ handleResult }) {
   const getInputFieldClasses = (): string =>
     videoInputError
       ? 'block w-full rounded-md text-red-900 border-red-300 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm'
-      : 'block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+      : 'block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
 
   return (
     <div className='mt-2'>
@@ -214,31 +214,31 @@ function VideoLinkUploader({ handleResult }) {
                 {/* upload segment */}
                 <div className='overflow-hidden rounded-full bg-gray-200'>
                   <div
-                    className='h-2 rounded-full bg-indigo-600'
+                    className='h-2 rounded-full bg-blue-600'
                     style={{
                       width: `${getTotalProgress()}%`
                     }}
                   />
                 </div>
                 <div className='mt-6 hidden grid-cols-4 text-sm font-medium text-gray-600 sm:grid'>
-                  <div className='text-indigo-600'>Downloading video</div>
+                  <div className='text-blue-600'>Downloading video</div>
                   <div
                     className={`text-center ${
-                      uploadProgress >= 45 ? 'text-indigo-600' : ''
+                      uploadProgress >= 45 ? 'text-blue-600' : ''
                     }`}
                   >
                     Extracting audio
                   </div>
                   <div
                     className={`text-center ${
-                      transcribeProgress >= 50 ? 'text-indigo-600' : ''
+                      transcribeProgress >= 50 ? 'text-blue-600' : ''
                     }`}
                   >
                     Transcribing to text
                   </div>
                   <div
                     className={`text-right ${
-                      transcribeProgress === 100 ? 'text-indigo-600' : ''
+                      transcribeProgress === 100 ? 'text-blue-600' : ''
                     }`}
                   >
                     Completed
@@ -274,7 +274,7 @@ function VideoLinkUploader({ handleResult }) {
               </div>
               {completionTime ? (
                 <p
-                  className='mt-2 text-sm text-indigo-500'
+                  className='mt-2 text-sm text-blue-500'
                   id='video-completion-time'
                 >
                   Completed transcription in {completionTime}.

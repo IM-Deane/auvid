@@ -23,11 +23,10 @@ function EventCountList() {
     notes: true
   })
 
-  if (isLoading) return <LoadingSkeleton count={3} />
   if (error) return <p>Error!</p>
+  if (isLoading) return <LoadingSkeleton count={3} />
 
   const eventCounts: EventCountListItem = data.data
-  console.log(data)
 
   return (
     <dt className='mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'>
@@ -38,7 +37,7 @@ function EventCountList() {
             className='relative overflow-hidden rounded-lg bg-white px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6'
           >
             <dt>
-              <div className='absolute rounded-md bg-indigo-500 p-3'>
+              <div className='absolute rounded-md bg-blue-500 p-3'>
                 <EnvelopeOpenIcon
                   className='h-6 w-6 text-white'
                   aria-hidden='true'
@@ -50,36 +49,38 @@ function EventCountList() {
             </dt>
             <dd className='ml-16 flex items-baseline pb-6 sm:pb-7'>
               <p className='text-2xl font-semibold text-gray-900'>{value}</p>
-              <p
-                className={classNames(
-                  value > 0 ? 'text-green-600' : 'text-red-600',
-                  'ml-2 flex items-baseline text-sm font-semibold'
-                )}
-              >
-                {value > 0 ? (
-                  <ArrowUpIcon
-                    className='h-5 w-5 flex-shrink-0 self-center text-green-500'
-                    aria-hidden='true'
-                  />
-                ) : (
-                  <ArrowDownIcon
-                    className='h-5 w-5 flex-shrink-0 self-center text-red-500'
-                    aria-hidden='true'
-                  />
-                )}
+              {value != 0 && (
+                <p
+                  className={classNames(
+                    value > 0 ? 'text-green-600' : 'text-red-600',
+                    'ml-2 flex items-baseline text-sm font-semibold'
+                  )}
+                >
+                  {value > 0 ? (
+                    <ArrowUpIcon
+                      className='h-5 w-5 flex-shrink-0 self-center text-green-500'
+                      aria-hidden='true'
+                    />
+                  ) : (
+                    <ArrowDownIcon
+                      className='h-5 w-5 flex-shrink-0 self-center text-red-500'
+                      aria-hidden='true'
+                    />
+                  )}
 
-                <span className='sr-only'>
-                  {' '}
-                  {value > 0 ? 'Increased' : 'Decreased'} by{' '}
-                </span>
-                {value}
-              </p>
+                  <span className='sr-only'>
+                    {' '}
+                    {value > 0 ? 'Increased' : 'Decreased'} by{' '}
+                  </span>
+                  {value}
+                </p>
+              )}
               <div className='absolute inset-x-0 bottom-0 bg-gray-50 px-4 py-4 sm:px-6'>
                 {key === 'notes' && (
                   <div className='text-sm'>
                     <Link
                       href='/notes'
-                      className='font-medium text-indigo-600 hover:text-indigo-500'
+                      className='font-medium text-blue-600 hover:text-blue-500'
                     >
                       {' '}
                       View all

@@ -48,7 +48,7 @@ function SubscriptionTab({ user }: { user: FullUser }) {
                 </h2>
                 <p className='mt-1 text-sm text-gray-500'>
                   See our{' '}
-                  <a href='#' className='text-indigo-600 hover:text-indigo-900'>
+                  <a href='#' className='text-blue-600 hover:text-blue-900'>
                     pricing
                   </a>{' '}
                   for a breakdown of what {siteConfig.siteName} has on offer.
@@ -71,7 +71,7 @@ function SubscriptionTab({ user }: { user: FullUser }) {
                             ? 'rounded-bl-md rounded-br-md'
                             : '',
                           checked
-                            ? 'z-10 border-indigo-200 bg-indigo-50'
+                            ? 'z-10 border-blue-200 bg-blue-50'
                             : 'border-gray-200',
                           'relative flex cursor-pointer flex-col border p-4 focus:outline-none md:grid md:grid-cols-3 md:pr-6'
                         )
@@ -83,7 +83,7 @@ function SubscriptionTab({ user }: { user: FullUser }) {
                             <span
                               className={classNames(
                                 checked
-                                  ? 'bg-indigo-500 border-transparent'
+                                  ? 'bg-blue-500 border-transparent'
                                   : 'bg-white border-gray-300',
                                 active
                                   ? 'ring-2 ring-offset-2 ring-gray-900'
@@ -107,7 +107,7 @@ function SubscriptionTab({ user }: { user: FullUser }) {
                           >
                             <span
                               className={classNames(
-                                checked ? 'text-indigo-900' : 'text-gray-900',
+                                checked ? 'text-blue-900' : 'text-gray-900',
                                 'font-medium'
                               )}
                             >
@@ -115,7 +115,7 @@ function SubscriptionTab({ user }: { user: FullUser }) {
                             </span>{' '}
                             <span
                               className={
-                                checked ? 'text-indigo-700' : 'text-gray-500'
+                                checked ? 'text-blue-700' : 'text-gray-500'
                               }
                             >
                               (${plan.priceYearly} / yr)
@@ -124,7 +124,7 @@ function SubscriptionTab({ user }: { user: FullUser }) {
                           <RadioGroup.Description
                             as='span'
                             className={classNames(
-                              checked ? 'text-indigo-700' : 'text-gray-500',
+                              checked ? 'text-blue-700' : 'text-gray-500',
                               'ml-6 pl-1 text-sm md:ml-0 md:pl-0 md:text-right'
                             )}
                           >
@@ -141,7 +141,7 @@ function SubscriptionTab({ user }: { user: FullUser }) {
                   checked={annualBillingEnabled}
                   onChange={setAnnualBillingEnabled}
                   className={classNames(
-                    annualBillingEnabled ? 'bg-indigo-500' : 'bg-gray-200',
+                    annualBillingEnabled ? 'bg-blue-500' : 'bg-gray-200',
                     'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2'
                   )}
                 >

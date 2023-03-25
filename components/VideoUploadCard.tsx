@@ -186,7 +186,7 @@ function VideoUploadCard({ fileData }) {
       <div className='overflow-hidden bg-white shadow sm:rounded-lg'>
         <div className='px-4 py-5 sm:px-6'>
           <div key={fileData.meta.thumbnail} className='relative'>
-            <div className='group aspect-w-10 aspect-h-7 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100'>
+            <div className='group aspect-w-10 aspect-h-7 block w-full overflow-hidden rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-100'>
               <img
                 src={fileData.meta.thumbnail}
                 alt={fileData.filename}
@@ -231,7 +231,7 @@ function VideoUploadCard({ fileData }) {
                   required
                   className={`block w-full rounded-md border-${
                     filenameError ? 'red' : 'gray'
-                  }-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`}
+                  }-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm`}
                   aria-describedby='filename-input'
                 />
                 <p
@@ -273,7 +273,7 @@ function VideoUploadCard({ fileData }) {
                   required
                   className={`block w-full rounded-md border-${
                     documentTitleError ? 'red' : 'gray'
-                  }-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`}
+                  }-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm`}
                   aria-describedby='document-title'
                 />
                 <p
