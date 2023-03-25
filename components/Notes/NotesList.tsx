@@ -11,7 +11,7 @@ import prettyBytes from 'pretty-bytes'
 import LoadingSkeleton from '../cards/LoadingSkeleton'
 
 function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {
-  if (isLoading) return <LoadingSkeleton count={6} large />
+  if (isLoading) return <LoadingSkeleton count={3} large />
 
   return (
     <>
