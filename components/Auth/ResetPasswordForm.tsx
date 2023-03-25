@@ -94,7 +94,7 @@ function ResetPasswordForm() {
   const getInputClasses = (field) =>
     formData.error[field]
       ? 'block w-full appearance-none rounded-md border border-red-300 px-3 py-2 placeholder-red-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm'
-      : 'block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+      : 'block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm'
 
   return (
     <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>

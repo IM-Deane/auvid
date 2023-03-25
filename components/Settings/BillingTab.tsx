@@ -231,7 +231,7 @@ function BillingTab() {
                           <td className='whitespace-nowrap px-6 py-4 text-right text-sm font-medium'>
                             <a
                               href={payment.href}
-                              className='text-indigo-600 hover:text-indigo-900'
+                              className='text-blue-600 hover:text-blue-900'
                             >
                               View receipt
                             </a>

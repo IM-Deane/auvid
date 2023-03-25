@@ -207,7 +207,7 @@ function FileUploadCard({ fileData }) {
                   required
                   className={`block w-full rounded-md border-${
                     filenameError ? 'red' : 'gray'
-                  }-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`}
+                  }-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm`}
                   aria-describedby='filename-input'
                 />
                 <p
@@ -249,7 +249,7 @@ function FileUploadCard({ fileData }) {
                   required
                   className={`block w-full rounded-md border-${
                     documentTitleError ? 'red' : 'gray'
-                  }-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`}
+                  }-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm`}
                   aria-describedby='document-title'
                 />
                 <p

@@ -134,7 +134,7 @@ function LoginForm() {
   const getInputClasses = (field) =>
     formData.error[field]
       ? 'block w-full appearance-none rounded-md border border-red-300 px-3 py-2 placeholder-red-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm'
-      : 'block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+      : 'block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm'
 
   return (
     <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
@@ -153,7 +153,7 @@ function LoginForm() {
           Or{' '}
           <Link
             href='/auth/signup'
-            className='font-medium text-indigo-600 hover:text-indigo-500'
+            className='font-medium text-blue-600 hover:text-blue-500'
           >
             sign up for a plan today
           </Link>
@@ -218,7 +218,7 @@ function LoginForm() {
               <div className='text-sm'>
                 <Link
                   href='/auth/forgot-password'
-                  className='font-medium text-indigo-600 hover:text-indigo-500'
+                  className='font-medium text-blue-600 hover:text-blue-500'
                 >
                   Forgot your password?
                 </Link>

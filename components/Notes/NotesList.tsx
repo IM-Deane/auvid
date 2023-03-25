@@ -22,7 +22,7 @@ function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {
         {notes.length > 0 && (
           <span
             onClick={() => setShowModal(true)}
-            className='flex-none w-32 cursor-pointer font-medium text-indigo-600 hover:text-indigo-500'
+            className='flex-none w-32 cursor-pointer font-medium text-blue-600 hover:text-blue-500'
           >
             Clear All
           </span>
@@ -37,7 +37,7 @@ function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {
           <p>
             Nothing to see here...{' '}
             <Link href='/upload'>
-              <span className='font-medium text-indigo-600 hover:text-indigo-500'>
+              <span className='font-medium text-blue-600 hover:text-blue-500'>
                 Add a new note <PlusCircleIcon className='w-4 h-4 inline' />
               </span>
             </Link>
