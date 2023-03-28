@@ -177,7 +177,7 @@ function NotesList() {
                         className='h-5 w-5 text-gray-400'
                         aria-hidden='true'
                       />
-                      <span className='ml-3'>View</span>
+                      <span className='ml-3'>Edit</span>
                     </Link>
                   </div>
                 </div>
