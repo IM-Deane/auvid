@@ -1,7 +1,7 @@
 import { siteConfig } from '@/types/site-config'
 import {
   BookOpenIcon,
-  DocumentDuplicateIcon,
+  DocumentPlusIcon,
   HomeIcon,
   UserCircleIcon
 } from '@heroicons/react/24/outline'
@@ -23,16 +23,13 @@ export default siteConfig({
 
   // main navigation tabs
   mainNavTabs: [
-    { name: 'Dashboard', icon: HomeIcon, current: true, href: '/' },
     {
-      name: 'Notes',
-      icon: DocumentDuplicateIcon,
+      name: 'New File',
+      icon: DocumentPlusIcon,
       current: false,
-      children: [
-        { name: 'Overview', href: '/notes' },
-        { name: 'Add Note', href: '/upload' }
-      ]
+      href: '/upload'
     },
+    { name: 'Dashboard', icon: HomeIcon, current: true, href: '/' },
     {
       name: 'Account',
       icon: UserCircleIcon,

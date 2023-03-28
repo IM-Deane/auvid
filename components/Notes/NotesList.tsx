@@ -1,24 +1,114 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 
+import useProfile from '@/hooks/useProfile'
+import NotesService from '@/utils/services/notes-service'
 import {
   PencilSquareIcon,
   PlusCircleIcon,
   XCircleIcon
 } from '@heroicons/react/20/solid'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import prettyBytes from 'pretty-bytes'
+import toast from 'react-hot-toast'
 
+import DeleteModal from '../DeleteModal'
+import ToastAlert from '../ToastAlert'
 import LoadingSkeleton from '../cards/LoadingSkeleton'
 
-function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {
+function NotesList() {
+  const [showModal, setShowModal] = useState<boolean>(false)
+
+  const supabase = useSupabaseClient()
+  const { userWithProfile } = useProfile()
+  const {
+    notes,
+    isLoading,
+    error: notesError,
+    refreshNotes
+  } = NotesService.getCurrentNotes()
+
+  const handleDeleteFile = async (filename) => {
+    try {
+      await supabase.storage
+        .from('notes')
+        .remove([`${userWithProfile.id}/${filename}`])
+
+      refreshNotes()
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          isOpen={visible}
+          title='File successfully deleted!'
+          message='Yeah we were a little tired of it too. 😉'
+        />
+      ))
+    } catch (error) {
+      console.log(error)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          isOpen={visible}
+          title='Well that was a little tougher than expected. 🤕'
+          message={error.message}
+        />
+      ))
+    } finally {
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          isOpen={visible}
+          title='File successfully deleted!'
+          message='Yeah we were a little tired of it too. 😉'
+        />
+      ))
+    }
+  }
+
+  const handleClearAllFiles = async () => {
+    try {
+      const filesToDelete = notes.map(
+        (file) => `${userWithProfile.id}/${file.name}`
+      )
+
+      await supabase.storage.from('notes').remove(filesToDelete)
+      refreshNotes()
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='success'
+          isOpen={visible}
+          title="We've cleared out your notes! 🧹"
+          message='You can now upload new ones. 📝'
+        />
+      ))
+    } catch (error) {
+      console.log(error)
+
+      toast.custom(({ visible }) => (
+        <ToastAlert
+          type='error'
+          isOpen={visible}
+          title="There's just too many of em! 🫣"
+          message={error.message}
+        />
+      ))
+    } finally {
+      setShowModal(false)
+    }
+  }
+
+  if (notesError) return <div>Error: {notesError}</div>
   if (isLoading) return <LoadingSkeleton count={3} large />
 
   return (
     <>
       <header className='flex justify-center items-center'>
-        <h1 className='flex-auto w-64 mb-5 text-2xl font-semibold text-gray-900'>
+        <h2 className='flex-auto text-lg font-medium leading-6 text-gray-900'>
           Notes
-        </h1>
+        </h2>
         {notes.length > 0 && (
           <span
             onClick={() => setShowModal(true)}
@@ -31,7 +121,7 @@ function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {
 
       <ul
         role='list'
-        className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
+        className='mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
       >
         {!notes.length ? (
           <p>
@@ -96,6 +186,11 @@ function NotesList({ notes, isLoading, setShowModal, handleDeleteFile }) {
           ))
         )}
       </ul>
+      <DeleteModal
+        open={showModal}
+        setOpen={setShowModal}
+        handleDeleteNotes={handleClearAllFiles}
+      />
     </>
   )
 }
